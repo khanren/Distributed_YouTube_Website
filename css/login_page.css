@@ -1,3 +1,4 @@
+/* General body styling */
 body {
     background-color: #ff0000;
     display: flex;
@@ -6,7 +7,10 @@ body {
     height: 100vh;
     margin: 0;
     overflow: hidden;
+    font-family: 'Arial', sans-serif;
 }
+
+/* Login card container */
 .login-card {
     background: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(10px);
@@ -15,43 +19,62 @@ body {
     width: 100%;
     max-width: 400px;
     color: white;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
 }
-.login-card h1 {
-    font-family: 'Arial', sans-serif;
-    font-size: 2rem;
-    text-align: center;
-    margin-bottom: 20px;
-}
-.form-control {
-    background: rgba(255, 255, 255, 0.2);
-    color: white;
-    border: none;
-}
-.form-control:focus {
-    background: rgba(255, 255, 255, 0.3);
-    color: white;
-    box-shadow: none;
-}
-.btn-primary {
-    background-color: white;
-    color: #ff0000;
-    font-weight: bold;
-    border: none;
-}
-.btn-primary:hover {
-    background-color: #ff4d4d;
-    color: white;
-}
-.form-check-label {
-    color: white;
-}
+
+/* Logo styling */
 .login-logo {
     display: flex;
     justify-content: center;
     margin-bottom: 20px;
 }
 .login-logo img {
-    width: 100px;
+    width: 80px;
     height: auto;
+}
+
+/* Title styling */
+.login-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* Form input styling */
+.form-control {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px;
+}
+.form-control:focus {
+    background: rgba(255, 255, 255, 0.3);
+    color: white;
+    box-shadow: none;
+    border: 1px solid white;
+}
+
+/* Button styling */
+.btn-primary {
+    background-color: white;
+    color: #ff0000;
+    font-weight: bold;
+    border: none;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+.btn-primary:hover {
+    background-color: #ff4d4d;
+    color: white;
+}
+
+/* Text links */
+a {
+    color: #ffcc00;
+    text-decoration: none;
+    font-weight: bold;
+}
+a:hover {
+    text-decoration: underline;
 }

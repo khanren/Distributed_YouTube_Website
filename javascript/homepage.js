@@ -7,6 +7,15 @@ let nextPageToken = null;
 const videoGrid = document.getElementById('video-grid');
 const loadingIndicator = document.getElementById('loading');
 
+document.getElementById('menu-toggle').addEventListener('click', () => {
+    const sidebar = document.getElementById('sidebar');
+    const mainContent = document.getElementById('main-content');
+
+    // Toggle the "hidden" class
+    sidebar.classList.toggle('hidden');
+});
+
+// Fetch popular videos
 async function fetchVideos() {
     try {
         loadingIndicator.classList.remove('hidden');
