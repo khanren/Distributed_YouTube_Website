@@ -18,8 +18,9 @@
         </div>
         <input type="text" id="search-bar" class="bg-gray-700 text-sm text-white px-4 py-2 rounded-full w-1/2 focus:outline-none" placeholder="Search">
         <div class="flex items-center space-x-4">
-            <button class="text-gray-400">🔔</button>
-            <img src="https://via.placeholder.com/32" alt="Profile" class="w-8 h-8 rounded-full">
+            <a href="login.html">
+                <img src="https://via.placeholder.com/32" class="w-8 h-8 rounded-full">
+            </a>
         </div>
     </nav>
 
@@ -52,11 +53,9 @@
             </ul>
         </aside>
 
-        <!-- Video Content -->
         <main class="flex-1 p-6">
             <h1 class="text-xl font-semibold mb-4">Recommended Videos</h1>
             <div id="video-grid" class="grid grid-cols-4 gap-6">
-                <!-- Dynamic videos will be loaded here -->
             </div>
             <div id="loading" class="text-center text-gray-400 mt-6 hidden">Loading more videos...</div>
         </main>
