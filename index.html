@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Homepage Prototype</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/homepage.css">
+    <script src="javascript/homepage.js" defer></script>
+</head>
+<body class="text-white">
+
+    <!-- Top Navigation Bar -->
+    <nav class="flex items-center justify-between px-6 py-3 ">
+        <div class="flex items-center space-x-4">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/b/b8/YouTube_Logo_2017.svg" alt="YouTube Logo" class="h-6">
+        </div>
+        <input type="text" id="search-bar" class="bg-gray-700 text-sm text-white px-4 py-2 rounded-full w-1/2 focus:outline-none" placeholder="Search">
+        <div class="flex items-center space-x-4">
+            <button class="text-gray-400">🔔</button>
+            <img src="https://via.placeholder.com/32" alt="Profile" class="w-8 h-8 rounded-full">
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="flex">
+        <!-- Sidebar -->
+        <aside class="w-1/6 py-4">
+            <ul class="space-y-4">
+                <li class="flex items-center space-x-3 px-4">
+                    <img src="https://via.placeholder.com/24" alt="Home Icon" class="sidebar-icon">
+                    <span>Home</span>
+                </li>
+                <li class="flex items-center space-x-3 px-4">
+                    <img src="https://via.placeholder.com/24" alt="Shorts Icon" class="sidebar-icon">
+                    <span>Shorts</span>
+                </li>
+                <li class="flex items-center space-x-3 px-4">
+                    <img src="https://via.placeholder.com/24" alt="Subscriptions Icon" class="sidebar-icon">
+                    <span>Subscriptions</span>
+                </li>
+                <hr class="border-gray-700 mx-4">
+                <li class="flex items-center space-x-3 px-4">
+                    <img src="https://via.placeholder.com/24" alt="Library Icon" class="sidebar-icon">
+                    <span>Library</span>
+                </li>
+                <li class="flex items-center space-x-3 px-4">
+                    <img src="https://via.placeholder.com/24" alt="History Icon" class="sidebar-icon">
+                    <span>History</span>
+                </li>
+            </ul>
+        </aside>
+
+        <!-- Video Content -->
+        <main class="flex-1 p-6">
+            <h1 class="text-xl font-semibold mb-4">Recommended Videos</h1>
+            <div id="video-grid" class="grid grid-cols-4 gap-6">
+                <!-- Dynamic videos will be loaded here -->
+            </div>
+            <div id="loading" class="text-center text-gray-400 mt-6 hidden">Loading more videos...</div>
+        </main>
+    </div>
+
+</body>
+</html>
