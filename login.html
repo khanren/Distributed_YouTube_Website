@@ -6,64 +6,56 @@
     <title>YouTube Login</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Google OAuth Client -->
     <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <!-- Firebase Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <!-- Custom Scripts -->
     <link href="css/login_page.css" rel="stylesheet">
+    <script src="javascript/loginpage.js" defer></script>
 </head>
 <body>
     <div class="login-card">
-        <div class="login-logo">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/4/42/YouTube_icon_%282013-2017%29.png" alt="YouTube Logo">
+        <div class="login-logo text-center">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/4/42/YouTube_icon_%282013-2017%29.png" alt="YouTube Logo" width="100">
         </div>
-        <h1 class="login-title">Sign in to YouTube</h1>
+        <h1 class="login-title text-center mt-2">Sign in to YouTube</h1>
+        <!-- Login Form -->
         <form id="login-form">
             <div class="mb-3">
-                <label for="username" class="form-label">Username</label>
-                <input type="text" class="form-control" id="username" placeholder="Enter your username" required>
+                <label for="email" class="form-label">Email</label>
+                <input type="email" class="form-control" id="email" placeholder="Enter your email" required>
             </div>
             <div class="mb-3">
                 <label for="password" class="form-label">Password</label>
                 <input type="password" class="form-control" id="password" placeholder="Enter your password" required>
             </div>
             <button type="submit" class="btn btn-primary w-100">Log In</button>
-            <div class="text-center mt-3">
-                <span>Or</span>
-            </div>
-            <div id="g_id_onload"
-                 data-client_id="581570337964-4hc2l2vftte7l7ijhcekosf33l0dmksh.apps.googleusercontent.com"
-                 data-auto_prompt="true"
-                 data-callback="handleCredentialResponse">
-            </div>
-            <div class="g_id_signin mt-2"
-                 data-type="standard"
-                 data-shape="rectangular"
-                 data-theme="outline"
-                 data-text="sign_in_with"
-                 data-size="large"
-                 data-logo_alignment="left">
-            </div>
         </form>
+
+        <div class="text-center mt-3">
+            <span>Or</span>
+        </div>
+
+        <!-- Google OAuth -->
+        <div id="g_id_onload"
+             data-client_id="581570337964-4hc2l2vftte7l7ijhcekosf33l0dmksh.apps.googleusercontent.com"
+             data-auto_prompt="false"
+             data-callback="handleCredentialResponse">
+        </div>
+        <div class="g_id_signin mt-2"
+             data-type="standard"
+             data-shape="rectangular"
+             data-theme="outline"
+             data-text="sign_in_with"
+             data-size="large"
+             data-logo_alignment="left">
+        </div>
+
         <div class="text-center mt-4">
             <p class="text-white">Don't have an account? <a href="signup.html" class="text-warning">Sign Up</a></p>
         </div>
     </div>
-
-    <script>
-        document.getElementById("login-form").addEventListener("submit", (event) => {
-            event.preventDefault();
-            const username = document.getElementById("username").value;
-            localStorage.setItem("isLoggedIn", "true");
-            localStorage.setItem("username", username);
-            localStorage.setItem("avatar", "https://via.placeholder.com/32");
-            window.location.href = "index.html";
-        });
-
-        function handleCredentialResponse(response) {
-            console.log("Encoded JWT ID token: " + response.credential);
-            localStorage.setItem("isLoggedIn", "true");
-            localStorage.setItem("username", "GoogleUser");
-            localStorage.setItem("avatar", "https://via.placeholder.com/32");
-            window.location.href = "index.html";
-        }
-    </script>
 </body>
 </html>

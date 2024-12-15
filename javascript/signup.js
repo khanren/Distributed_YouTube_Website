@@ -1,6 +1,3 @@
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later,
-// measurementId is optional
 var firebaseConfig = {
     apiKey: "AIzaSyCCoYF6WOiJF6aUDDf0bbAH5OjE64jr064",
     authDomain: "distributed-4f324.firebaseapp.com",
@@ -11,12 +8,10 @@ var firebaseConfig = {
     measurementId: "G-TFQK6LP2GK"
   };
   
-  // Initialize Firebase
   firebase.initializeApp(firebaseConfig);
   
   const auth = firebase.auth();
   
-// Signup function
 function signUp() {
     var username = document.getElementById("username");
     var email = document.getElementById("email");
