@@ -22,7 +22,56 @@ function shuffleArray(array) {
     return array;
 }
 
-// Fetch keyword suggestions
+// Redirect to the video page with the videoId in the URL
+function redirectToVideoPage(videoId) {
+    window.location.href = `video.html?videoId=${videoId}`;
+}
+
+// Fetch videos from the YouTube API
+async function fetchVideos(searchQuery = '', append = false) {
+    try {
+        loadingIndicator.classList.remove('hidden');
+
+        let url = searchQuery
+            ? `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(searchQuery)}&type=video&maxResults=50&key=${API_KEY}`
+            : `https://www.googleapis.com/youtube/v3/videos?part=snippet&chart=mostPopular&regionCode=${randomRegion}&maxResults=50&key=${API_KEY}`;
+
+        if (nextPageToken) url += `&pageToken=${nextPageToken}`;
+
+        const response = await fetch(url);
+        const data = await response.json();
+
+        nextPageToken = data.nextPageToken || null;
+        loadingIndicator.classList.add('hidden');
+
+        let items = searchQuery ? data.items.filter((item) => item.id.videoId) : data.items;
+
+        items = shuffleArray(items);
+
+        if (!append) videoGrid.innerHTML = '';
+
+        items.forEach((video) => {
+            const videoId = searchQuery ? video.id.videoId : video.id;
+            const videoCard = document.createElement('div');
+            videoCard.classList.add('video-card');
+            videoCard.onclick = () => redirectToVideoPage(videoId);
+
+            videoCard.innerHTML = `
+                <div class="video-thumbnail">
+                    <img src="${video.snippet.thumbnails.medium.url}" alt="${video.snippet.title}">
+                </div>
+                <h2>${video.snippet.title}</h2>
+                <p>${video.snippet.channelTitle}</p>
+            `;
+
+            videoGrid.appendChild(videoCard);
+        });
+    } catch (error) {
+        console.error('Error fetching videos:', error);
+    }
+}
+
+// Fetch keyword suggestions for the search bar
 async function fetchSuggestions(query) {
     try {
         const response = await fetch(`https://suggestqueries.google.com/complete/search?client=firefox&ds=yt&q=${encodeURIComponent(query)}`);
@@ -34,57 +83,24 @@ async function fetchSuggestions(query) {
     }
 }
 
-// Fetch videos
-async function fetchVideos(searchQuery = '', append = false) {
-    try {
-        loadingIndicator.classList.remove('hidden');
+// Display suggestions in the dropdown
+function showSuggestions(suggestions) {
+    suggestionList.innerHTML = '';
+    suggestionList.classList.remove('d-none');
 
-        let url = searchQuery
-            ? `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(
-                  searchQuery
-              )}&type=video&maxResults=50&key=${API_KEY}`
-            : `https://www.googleapis.com/youtube/v3/videos?part=snippet&chart=mostPopular&regionCode=${randomRegion}&maxResults=50&key=${API_KEY}`;
-
-        if (nextPageToken) url += `&pageToken=${nextPageToken}`;
-
-        const response = await fetch(url);
-        const data = await response.json();
-
-        nextPageToken = data.nextPageToken || null;
-        loadingIndicator.classList.add('hidden');
-
-        let items = searchQuery
-            ? data.items.filter((item) => item.id.videoId)
-            : data.items;
-
-        // Shuffle the items for randomness
-        items = shuffleArray(items);
-
-        if (!append) videoGrid.innerHTML = '';
-
-        items.forEach((video) => {
-            const videoId = searchQuery ? video.id.videoId : video.id;
-            const videoCard = document.createElement('a');
-            videoCard.href = `https://www.youtube.com/watch?v=${videoId}`;
-            videoCard.target = '_blank';
-            videoCard.classList.add('video-card');
-
-            videoCard.innerHTML = `
-                <div class="video-thumbnail bg-gray-700 h-36">
-                    <img src="${video.snippet.thumbnails.medium.url}" alt="${video.snippet.title}" class="w-full h-full object-cover">
-                </div>
-                <h2 class="mt-2 text-sm font-medium">${video.snippet.title}</h2>
-                <p class="text-xs text-gray-400">${video.snippet.channelTitle}</p>
-            `;
-
-            videoGrid.appendChild(videoCard);
+    suggestions.forEach((suggestion) => {
+        const li = document.createElement('li');
+        li.className = 'list-group-item list-group-item-action';
+        li.textContent = suggestion;
+        li.addEventListener('click', () => {
+            searchInput.value = suggestion;
+            suggestionList.classList.add('d-none');
         });
-    } catch (error) {
-        console.error('Error fetching videos:', error);
-    }
+        suggestionList.appendChild(li);
+    });
 }
 
-// Handle suggestions
+// Handle input in the search bar
 searchInput.addEventListener('input', async () => {
     const query = searchInput.value.trim();
     if (!query) {
@@ -95,14 +111,14 @@ searchInput.addEventListener('input', async () => {
     showSuggestions(suggestions);
 });
 
-// Hide suggestions when clicking outside
+// Hide suggestions when clicking outside the search bar
 document.addEventListener('click', (e) => {
     if (!searchInput.contains(e.target) && !suggestionList.contains(e.target)) {
         suggestionList.classList.add('d-none');
     }
 });
 
-// Handle form submission
+// Handle form submission for searching videos
 searchForm.addEventListener('submit', (e) => {
     e.preventDefault();
     const query = searchInput.value.trim();
@@ -113,14 +129,13 @@ searchForm.addEventListener('submit', (e) => {
     }
 });
 
-// Infinite scroll
+// Infinite scroll to load more videos
 window.addEventListener('scroll', () => {
     if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 100 && nextPageToken) {
         fetchVideos(currentSearchQuery, true);
     }
 });
 
-// Initial fetch
 fetchVideos();
 
 document.getElementById('menu-toggle').addEventListener('click', () => {
