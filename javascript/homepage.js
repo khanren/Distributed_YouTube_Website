@@ -60,3 +60,30 @@ window.addEventListener('scroll', () => {
 
 // Fetch initial videos on page load
 fetchVideos();
+
+document.addEventListener("DOMContentLoaded", () => {
+    const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+    const username = localStorage.getItem("username");
+    const avatar = localStorage.getItem("avatar");
+
+    const userAvatar = document.getElementById("userAvatar");
+    const dropdownMenu = document.querySelector(".dropdown-menu");
+
+    if (isLoggedIn) {
+        userAvatar.src = avatar || "https://via.placeholder.com/40";
+        dropdownMenu.innerHTML = `
+            <li><a class="dropdown-item" href="#">Settings</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item logout" href="#">Logout</a></li>
+        `;
+
+        document.querySelector(".logout").addEventListener("click", () => {
+            localStorage.clear();
+            location.reload();
+        });
+    } else {
+        dropdownMenu.innerHTML = `
+            <li><a class="dropdown-item" href="login.html">Log in</a></li>
+        `;
+    }
+});

@@ -2,22 +2,19 @@ document.addEventListener("DOMContentLoaded", () => {
     const loginForm = document.getElementById("login-form");
 
     loginForm.addEventListener("submit", (event) => {
-        event.preventDefault(); // Prevent default form submission behavior
+        event.preventDefault();
 
-        // Mock user authentication (replace with real authentication logic)
         const username = document.getElementById("username").value;
-        const password = document.getElementById("password").value;
+        const avatar = document.getElementById("avatar").value;
 
-        if (username && password) { // Simplistic check, replace with actual authentication
-            // Save user login info to localStorage
+        if (username && avatar) {
             localStorage.setItem("isLoggedIn", "true");
             localStorage.setItem("username", username);
-            localStorage.setItem("avatar", "https://via.placeholder.com/32"); // Mock avatar URL
+            localStorage.setItem("avatar", avatar);
 
-            // Redirect to homepage
-            window.location.href = "homepage.html";
+            window.location.href = "index.html";
         } else {
-            alert("Invalid login. Please try again.");
+            alert("Please fill out all fields.");
         }
     });
 });
