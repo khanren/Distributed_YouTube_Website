@@ -1,3 +1,4 @@
+// Firebase Configuration
 var firebaseConfig = {
     apiKey: "AIzaSyCCoYF6WOiJF6aUDDf0bbAH5OjE64jr064",
     authDomain: "distributed-4f324.firebaseapp.com",
@@ -5,12 +6,16 @@ var firebaseConfig = {
     storageBucket: "distributed-4f324.firebasestorage.app",
     messagingSenderId: "1039372735541",
     appId: "1:1039372735541:web:0e7a763807cbf70891cd7c",
-    measurementId: "G-TFQK6LP2GK"
+    measurementId: "G-TFQK6LP2GK",
+    databaseURL: "https://distributed-4f324-default-rtdb.asia-southeast1.firebasedatabase.app/"
 };
 
+// Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 
+// Firebase Services
 const auth = firebase.auth();
+const database = firebase.database(); // Ensure Firebase is initialized before accessing database
 
 // Email format validation function
 function isValidEmail(email) {
@@ -18,48 +23,68 @@ function isValidEmail(email) {
     return emailRegex.test(email);
 }
 
+// Sign-Up Function
 function signUp() {
-    var username = document.getElementById("username");
-    var email = document.getElementById("email");
-    var password = document.getElementById("password");
-    var confirmPassword = document.getElementById("confirmPassword");
+    // Retrieve form inputs
+    var username = document.getElementById("username").value;
+    var email = document.getElementById("email").value;
+    var password = document.getElementById("password").value;
+    var confirmPassword = document.getElementById("confirmPassword").value;
 
     // Validate email format
-    if (!isValidEmail(email.value)) {
+    if (!isValidEmail(email)) {
         alert("Please enter a valid email address.");
         return;
     }
 
     // Validate password match
-    if (password.value !== confirmPassword.value) {
+    if (password !== confirmPassword) {
         alert("Passwords do not match!");
         return;
     }
 
     // Check if email is already registered
-    auth.fetchSignInMethodsForEmail(email.value)
+    auth.fetchSignInMethodsForEmail(email)
         .then((methods) => {
             if (methods.length > 0) {
                 // Email already registered
                 alert("This email is already registered. Please use a different email or log in.");
             } else {
                 // Proceed with signup
-                auth.createUserWithEmailAndPassword(email.value, password.value)
+                auth.createUserWithEmailAndPassword(email, password)
                     .then((userCredential) => {
+                        const user = userCredential.user;
+                        const uid = user.uid;
+
                         // Send email verification
-                        userCredential.user.sendEmailVerification()
+                        user.sendEmailVerification()
                             .then(() => {
                                 alert("SignUp Successful! A verification email has been sent.");
-                                window.location.href = "login.html"; 
                             })
                             .catch((error) => {
                                 console.error("Error sending verification email:", error);
                                 alert("Error sending verification email: " + error.message);
                             });
+
+                        // Save user data in Firebase Realtime Database
+                        database.ref('User/' + uid).set({
+                            UID: uid,
+                            Username: username,
+                            Email: email,
+                            Password: password // Avoid storing plain text passwords in production
+                        })
+                        .then(() => {
+                            console.log("User data saved successfully!");
+                            window.location.href = "login.html";
+                        })
+                        .catch((error) => {
+                            console.error("Error saving user data:", error);
+                            alert("Error saving user data: " + error.message);
+                        });
                     })
-                    .catch((e) => {
-                        console.error("Error during sign up:", e);
-                        alert(e.message);
+                    .catch((error) => {
+                        console.error("Error during sign up:", error);
+                        alert(error.message);
                     });
             }
         })
