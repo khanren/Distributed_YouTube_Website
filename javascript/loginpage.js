@@ -21,10 +21,16 @@ function signIn(event) {
 
     auth.signInWithEmailAndPassword(email, password)
         .then((userCredential) => {
-            alert("Login Successful!");
-            localStorage.setItem("isLoggedIn", "true");
-            localStorage.setItem("email", userCredential.user.email);
-            window.location.href = "index.html"; // Redirect to homepage
+            // Check if the user's email is verified
+            if (userCredential.user.emailVerified) {
+                alert("Login Successful!");
+                localStorage.setItem("isLoggedIn", "true");
+                localStorage.setItem("email", userCredential.user.email);
+                window.location.href = "index.html"; // Redirect to homepage
+            } else {
+                alert("Please verify your email before logging in.");
+                auth.signOut(); // Sign out the user to prevent access
+            }
         })
         .catch((error) => {
             alert("Error: " + error.message);
@@ -46,6 +52,27 @@ function handleCredentialResponse(response) {
     // Simulate redirect
     alert("Google Sign-In Successful!");
     window.location.href = "index.html";
+}
+
+// Handle Password Reset
+function resetPassword(event) {
+    event.preventDefault();
+    const email = document.getElementById("reset-email").value;
+
+    auth.sendPasswordResetEmail(email)
+        .then(() => {
+            alert("Password reset email sent. Check your inbox.");
+            window.location.href = "login.html"; // Redirect to login page
+        })
+        .catch((error) => {
+            alert("Error: " + error.message);
+        });
+}
+
+// Add event listener for the reset password form
+const resetPasswordForm = document.getElementById("reset-password-form");
+if (resetPasswordForm) {
+    resetPasswordForm.addEventListener("submit", resetPassword);
 }
 
 // Firebase Auth State Listener (Optional for Debugging)
