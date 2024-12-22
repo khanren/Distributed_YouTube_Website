@@ -5,24 +5,94 @@ body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
+    margin-top: 50px;
 }
 
 .container-fluid {
     margin-top: 20px;
 }
 
-.row {
-    display: flex;
-}
-
-/* Video Player Styling */
-.video-container {
-    text-align: center;
-    margin-top: 70px; /* Ensures the video doesn’t overlap with the navbar */
-}
 
 iframe {
     width: 100%;
     height: 500px;
     border: none;
+}
+
+.row {
+    display: flex;
+    flex-wrap: nowrap; /* Prevent wrapping */
+}
+
+.col-md-9 {
+    flex: 0 0 75%; /* Ensure main video section takes 75% of the width */
+}
+
+/* Recommended Video Section */
+main#main-content {
+    padding: 0px;
+}
+
+ul#recommended-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.recommended-video-card {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px; /* Space between rows */
+    cursor: pointer;
+    width: 100%; /* Ensure it occupies the full width */
+}
+
+.recommended-video-card img {
+    width: 120px; /* Thumbnail size */
+    height: 90px;
+    margin-right: 10px;
+    border-radius: 5px;
+}
+
+.recommended-video-card div {
+    flex-grow: 1;
+}
+
+.recommended-video-card h6 {
+    margin: 0;
+    font-size: 14px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.recommended-video-card p {
+    font-size: 12px;
+    color: gray;
+}
+
+#video-actions {
+    display: flex;
+    justify-content: center; /* Center-align the buttons */
+    background-color: #111; /* Background matching the screenshot */
+    padding: 10px;
+    border-radius: 10px; /* Rounded edges */
+    margin-top: 20px; /* Space above the button section */
+}
+
+#video-actions button {
+    color: white;
+    border: 1px solid #555; /* Border to match the screenshot */
+    background-color: #222;
+    padding: 10px 20px;
+    border-radius: 30px; /* Fully rounded button corners */
+    font-size: 16px; /* Increase text size for readability */
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Spacing between icon and text */
+    transition: background-color 0.3s ease;
+}
+
+#video-actions button:hover {
+    background-color: #444; /* Lighter hover effect */
 }
