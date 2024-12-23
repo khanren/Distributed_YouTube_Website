@@ -1,3 +1,4 @@
+// Extract videoId from URL parameters
 const urlParams = new URLSearchParams(window.location.search);
 const videoId = urlParams.get('videoId');
 const videoTitle = document.getElementById('video-title');
@@ -25,39 +26,91 @@ const database = firebase.database();
 const likeButton = document.getElementById('like-button');
 const dislikeButton = document.getElementById('dislike-button');
 
-if (likeButton && dislikeButton) {
-    likeButton.addEventListener('click', () => updateLikeDislikeCount('likes'));
-    dislikeButton.addEventListener('click', () => updateLikeDislikeCount('dislikes'));
-} else {
-    console.error('Like or Dislike button not found in DOM');
-}
+likeButton.addEventListener('click', () => updateLikeDislikeCount('like'));
+dislikeButton.addEventListener('click', () => updateLikeDislikeCount('dislike'));
 
-function updateLikeDislikeCount(type) {
-    if (videoId) {
-        const videoRef = database.ref('videos/' + videoId);
-        videoRef.transaction((video) => {
-            if (!video) {
-                video = { likes: 0, dislikes: 0 };
-            }
-            if (type === 'likes') {
-                video.likes = (video.likes || 0) + 1;
-            } else if (type === 'dislikes') {
-                video.dislikes = (video.dislikes || 0) + 1;
-            }
-            return video;
-        }, (error, committed, snapshot) => {
-            if (error) {
-                console.error('Transaction failed: ', error);
-            } else if (!committed) {
-                console.log('Transaction not committed');
+// Function to check if a user is logged in
+function checkAuth() {
+    return new Promise((resolve, reject) => {
+        firebase.auth().onAuthStateChanged(user => {
+            if (user) {
+                resolve(user);
             } else {
-                console.log('Transaction succeeded: ', snapshot.val());
+                reject(new Error('User not logged in'));
             }
         });
-    } else {
-        console.error('Video ID not found!');
-    }
+    });
 }
+
+// Update like or dislike count
+function updateLikeDislikeCount(action) {
+    checkAuth()
+        .then(user => {
+            const userId = user.uid; // Get logged-in user's ID
+            const userRef = database.ref(`User/${userId}`); // Reference to the User data
+            const videoRef = database.ref(`LikeOrDislikeCount/${videoId}/${userId}`); // Reference to the LikeOrDislikeCount
+
+            // Fetch the username from the database
+            userRef.once('value').then(snapshot => {
+                const userData = snapshot.val();
+                if (userData && userData.Username) {
+                    const username = userData.Username;
+
+                    // Check if the user already liked/disliked
+                    videoRef.once('value').then(snapshot => {
+                        const existingData = snapshot.val();
+
+                        if (existingData && existingData.action === action) {
+                            // User already performed this action, remove it
+                            videoRef.remove().then(() => updateLikeDislikeCountsDisplay());
+                        } else {
+                            // Add or update the action
+                            videoRef.set({
+                                username: username,
+                                action: action
+                            }).then(() => updateLikeDislikeCountsDisplay());
+                        }
+                    });
+                } else {
+                    console.error('Username not found for user:', userId);
+                    alert('Unable to retrieve username. Please check your account details.');
+                }
+            });
+        })
+        .catch(() => {
+            alert('Please log in to like or dislike the video.');
+        });
+}
+
+// Function to update the like and dislike counts displayed on the buttons
+function updateLikeDislikeCountsDisplay() {
+    const videoLikesRef = database.ref(`LikeOrDislikeCount/${videoId}`);
+
+    videoLikesRef.once('value').then(snapshot => {
+        const data = snapshot.val();
+        let likeCount = 0;
+        let dislikeCount = 0;
+
+        if (data) {
+            Object.values(data).forEach(entry => {
+                if (entry.action === 'like') {
+                    likeCount++;
+                } else if (entry.action === 'dislike') {
+                    dislikeCount++;
+                }
+            });
+        }
+
+        // Update the button text with counts
+        likeButton.innerHTML = `<i class="bi bi-hand-thumbs-up"></i> Like (${likeCount})`;
+        dislikeButton.innerHTML = `<i class="bi bi-hand-thumbs-down"></i> Dislike (${dislikeCount})`;
+    });
+}
+
+// Initialize Firebase Authentication
+firebase.auth().setPersistence(firebase.auth.Auth.Persistence.SESSION).catch(error => {
+    console.error('Auth persistence error: ', error);
+});
 
 // YouTube IFrame API will call this function when ready
 function onYouTubeIframeAPIReady() {
@@ -83,6 +136,7 @@ function onYouTubeIframeAPIReady() {
 // Play the video when the player is ready
 function onPlayerReady(event) {
     event.target.playVideo();
+    updateLikeDislikeCountsDisplay(); // Update counts when the video is ready
 }
 
 // Handle errors gracefully
