@@ -1,8 +1,6 @@
-// Import and configure Firebase
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.2/firebase-app.js";
 import { getAuth, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/9.17.2/firebase-auth.js";
 
-// Your Firebase configuration
 const firebaseConfig = {
     apiKey: "AIzaSyCCoYF6WOiJF6aUDDf0bbAH5OjE64jr064",
     authDomain: "distributed-4f324.firebaseapp.com",
@@ -13,21 +11,17 @@ const firebaseConfig = {
     measurementId: "G-TFQK6LP2GK"
 };
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
-// Handle form submission
 document.getElementById("reset-password-form").addEventListener("submit", async (event) => {
-    event.preventDefault(); // Prevent default form submission behavior
+    event.preventDefault();
 
     const email = document.getElementById("reset-email").value;
 
     try {
         await sendPasswordResetEmail(auth, email);
         alert("Password reset email sent! Please check your inbox.");
-        
-        // Redirect to index.html
         window.location.href = "index.html";
     } catch (error) {
         console.error("Error sending password reset email:", error);

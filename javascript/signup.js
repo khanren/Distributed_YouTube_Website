@@ -1,4 +1,3 @@
-// Firebase Configuration
 var firebaseConfig = {
     apiKey: "AIzaSyCCoYF6WOiJF6aUDDf0bbAH5OjE64jr064",
     authDomain: "distributed-4f324.firebaseapp.com",
@@ -10,53 +9,42 @@ var firebaseConfig = {
     databaseURL: "https://distributed-4f324-default-rtdb.asia-southeast1.firebasedatabase.app/"
 };
 
-// Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 
-// Firebase Services
 const auth = firebase.auth();
-const database = firebase.database(); // Ensure Firebase is initialized before accessing database
+const database = firebase.database();
 
-// Email format validation function
 function isValidEmail(email) {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
 }
 
-// Sign-Up Function
 function signUp() {
-    // Retrieve form inputs
     var username = document.getElementById("username").value;
     var email = document.getElementById("email").value;
     var password = document.getElementById("password").value;
     var confirmPassword = document.getElementById("confirmPassword").value;
 
-    // Validate email format
     if (!isValidEmail(email)) {
         alert("Please enter a valid email address.");
         return;
     }
 
-    // Validate password match
     if (password !== confirmPassword) {
         alert("Passwords do not match!");
         return;
     }
 
-    // Check if email is already registered
     auth.fetchSignInMethodsForEmail(email)
         .then((methods) => {
             if (methods.length > 0) {
-                // Email already registered
                 alert("This email is already registered. Please use a different email or log in.");
             } else {
-                // Proceed with signup
                 auth.createUserWithEmailAndPassword(email, password)
                     .then((userCredential) => {
                         const user = userCredential.user;
                         const uid = user.uid;
 
-                        // Send email verification
                         user.sendEmailVerification()
                             .then(() => {
                                 alert("SignUp Successful! A verification email has been sent.");
@@ -66,12 +54,11 @@ function signUp() {
                                 alert("Error sending verification email: " + error.message);
                             });
 
-                        // Save user data in Firebase Realtime Database
                         database.ref('User/' + uid).set({
                             UID: uid,
                             Username: username,
                             Email: email,
-                            Password: password // Avoid storing plain text passwords in production
+                            Password: password
                         })
                         .then(() => {
                             console.log("User data saved successfully!");

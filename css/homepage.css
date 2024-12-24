@@ -1,21 +1,19 @@
-/* Global Reset */
 body {
     margin: 0;
     padding: 0;
     font-family: Arial, sans-serif;
-    background-color: #000 !important; /* Black background for the body */
-    color: #fff !important; /* White text for the body */
+    background-color: #000 !important;
+    color: #fff !important;
     overflow-x: hidden;
 }
 
-/* Navbar Styles */
 .navbar {
-    background-color: #000 !important; /* Black background for navbar */
+    background-color: #000 !important;
     border-bottom: 1px solid #444;
-    position: fixed; /* Stick navbar to the top */
+    position: fixed;
     top: 0;
     width: 100%;
-    z-index: 1000; /* Ensure it stays on top of other elements */
+    z-index: 1000;
 }
 
 .navbar .form-control {
@@ -28,28 +26,27 @@ body {
     color: #ccc;
 }
 
-/* Sidebar Styles */
 #sidebar {
-    background-color: #000 !important; /* Black background for sidebar */
+    background-color: #000 !important;
     overflow-y: auto;
-    color: #fff !important; /* White text for sidebar items */
-    width: 250px; /* Expanded width */
+    color: #fff !important;
+    width: 250px;
     height: 100vh;
     position: fixed;
     z-index: 1000;
     transition: transform 0.3s ease, opacity 0.3s ease;
-    top: 56px; /* Offset to account for the height of the navbar */
+    top: 56px;
 }
 
 .hidden {
-    transform: translateX(-100%); /* Hide the sidebar by shifting it off-screen */
-    opacity: 0; /* Make the sidebar invisible */
-    width: 0; /* No width for hidden state */
+    transform: translateX(-100%);
+    opacity: 0;
+    width: 0;
 }
 
 #main-content {
-    margin-left: 0; /* Default margin when sidebar is hidden */
-    padding-top: 56px; /* Adjust for fixed navbar height */
+    margin-left: 0;
+    padding-top: 56px;
     transition: margin-left 0.3s ease;
 }
 
@@ -68,7 +65,7 @@ body {
 }
 
 #sidebar:not(.hidden) + #main-content {
-    margin-left: 250px; /* Adjust margin when sidebar is visible */
+    margin-left: 250px;
 }
 
 aside ul {
@@ -80,28 +77,26 @@ aside ul {
 aside .nav-link {
     font-size: 14px;
     padding: 10px 15px;
-    color: #fff !important; /* White text for links */
+    color: #fff !important;
     text-decoration: none;
     transition: background-color 0.3s ease;
 }
 
 aside .nav-link:hover {
-    background-color: #222; /* Darker hover effect */
+    background-color: #222;
     border-radius: 5px;
 }
 
-/* Video Grid Layout */
 #video-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr); /* Four columns in a row */
-    gap: 1rem; /* Space between the videos */
-    background-color: #000 !important; /* Black background for the grid */
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    background-color: #000 !important;
     padding: 1rem;
 }
 
-/* Video Card Styling */
 .video-card {
-    background-color: #000 !important; /* Black background for the grid */
+    background-color: #000 !important;
     border-radius: 10px;
     overflow: hidden;
     transition: transform 0.3s ease;
@@ -128,5 +123,5 @@ aside .nav-link:hover {
 .video-card p {
     padding: 0 0.5rem 0.5rem;
     font-size: 12px;
-    color: #aaa; /* Slightly lighter text for channel names */
+    color: #aaa;
 }

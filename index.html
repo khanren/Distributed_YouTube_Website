@@ -11,7 +11,6 @@
     <script src="javascript/homepage.js" defer></script>
 </head>
 <body class="bg-dark text-white">
-    <!-- Top Navigation Bar -->
     <nav class="navbar navbar-dark bg-secondary px-4 py-2 d-flex align-items-center">
         <div class="d-flex align-items-center">
             <button id="menu-toggle" class="btn btn-outline-light me-3">
@@ -26,7 +25,6 @@
             <ul id="suggestion-list" class="list-group position-absolute w-100 d-none"></ul>
             <button type="submit" class="btn btn-outline-light ms-2 rounded-pill">Search</button>
         </form>
-        <!-- User Avatar with Dropdown -->
         <div class="dropdown">
             <img 
                 src="https://via.placeholder.com/40" 
@@ -45,9 +43,7 @@
         </div>
     </nav>
 
-    <!-- Main Layout -->
     <div class="d-flex">
-        <!-- Sidebar -->
         <aside id="sidebar" class="text-white p-3 hidden">
             <ul class="nav flex-column">
                 <li class="nav-item py-2">
@@ -78,7 +74,6 @@
             </ul>
         </aside>
 
-        <!-- Video Content -->
         <main id="main-content" class="flex-grow-1 p-6">
             <div id="video-grid" class="grid"></div>
             <div id="loading" class="text-center text-gray-400 mt-6 hidden">Loading more videos...</div>
