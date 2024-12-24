@@ -1,6 +1,5 @@
-/* General body styling */
 body {
-    background-color: black;
+    background-color: #121212;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -10,7 +9,6 @@ body {
     font-family: 'Arial', sans-serif;
 }
 
-/* Login card container */
 .login-card {
     background: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(10px);
@@ -19,10 +17,9 @@ body {
     width: 100%;
     max-width: 400px;
     color: white;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.6);
 }
 
-/* Logo styling */
 .login-logo {
     display: flex;
     justify-content: center;
@@ -33,48 +30,121 @@ body {
     height: auto;
 }
 
-/* Title styling */
 .login-title {
-    font-size: 1.5rem;
+    font-size: 1.75rem;
     font-weight: bold;
     text-align: center;
     margin-bottom: 20px;
+    color: #ff4d4d;
 }
 
-/* Form input styling */
 .form-control {
     background: rgba(255, 255, 255, 0.2);
     color: white;
     border: none;
     border-radius: 5px;
     padding: 10px;
+    margin-bottom: 10px;
 }
 .form-control:focus {
     background: rgba(255, 255, 255, 0.3);
     color: white;
-    box-shadow: none;
-    border: 1px solid white;
+    box-shadow: 0 0 5px #ff4d4d;
+    border: 1px solid #ff4d4d;
 }
 
-/* Button styling */
+body {
+    font-family: sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+}
+
+.container {
+    background-color: #383838;
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    width: 350px;
+}
+
+.logo {
+    width: 50px;
+    margin-bottom: 20px;
+}
+
+h2 {
+    color: #ff4d4d;
+    margin-bottom: 20px;
+}
+
+.input-group {
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+label {
+    display: block;
+    color: white;
+    margin-bottom: 5px;
+}
+
+input[type="email"] {
+    width: calc(100% - 12px);
+    padding: 10px;
+    border: 1px solid #555;
+    border-radius: 5px;
+    background-color: #444;
+    color: white;
+    box-sizing: border-box;
+}
+
+input[type="email"]:focus {
+    outline: 1px solid #ff4d4d;
+}
+
 .btn-primary {
-    background-color: white;
-    color: #ff0000;
+    background-color: #ff4d4d;
+    color: white;
     font-weight: bold;
     border: none;
     transition: background-color 0.3s ease, color 0.3s ease;
-}
-.btn-primary:hover {
-    background-color: #ff4d4d;
-    color: white;
+    padding: 12px 20px;
+    border-radius: 5px;
+    width: 40%;
+    cursor: pointer;
+    margin-top: 10px;
 }
 
-/* Text links */
+.btn-primary:hover {
+    background-color: white;
+    color: #ff4d4d;
+}
+
 a {
     color: #ffcc00;
     text-decoration: none;
     font-weight: bold;
+    display: block;
+    margin-top: 15px;
 }
+
 a:hover {
     text-decoration: underline;
+}
+
+body > *:not(script):not(style) {
+    margin: 10px auto;
+    display: block;
+    max-width: 350px;
+    padding: 0 20px;
+}
+body > h2{
+    margin-top: 20px;
+}
+body > input[type="email"]{
+    margin-bottom: 20px;
 }
