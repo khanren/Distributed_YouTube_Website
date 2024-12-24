@@ -5,12 +5,10 @@ const recommendedList = document.getElementById('recommended-list');
 const commentsList = document.getElementById('comments-list');
 const commentInput = document.getElementById('comment-input');
 const commentSubmit = document.getElementById('comment-submit');
-const likeButton = document.getElementById('like-button');
-const dislikeButton = document.getElementById('dislike-button');
 
 let player;
 
-const firebaseConfig = {
+var firebaseConfig = {
     apiKey: "AIzaSyCCoYF6WOiJF6aUDDf0bbAH5OjE64jr064",
     authDomain: "distributed-4f324.firebaseapp.com",
     projectId: "distributed-4f324",
@@ -20,78 +18,41 @@ const firebaseConfig = {
     measurementId: "G-TFQK6LP2GK",
     databaseURL: "https://distributed-4f324-default-rtdb.asia-southeast1.firebasedatabase.app/"
 };
+
 firebase.initializeApp(firebaseConfig);
 const database = firebase.database();
 
-document.addEventListener('DOMContentLoaded', initializePage);
-likeButton.addEventListener('click', () => handleLikeDislike('like'));
-dislikeButton.addEventListener('click', () => handleLikeDislike('dislike'));
-commentSubmit.addEventListener('click', addComment);
+const likeButton = document.getElementById('like-button');
+const dislikeButton = document.getElementById('dislike-button');
 
-function initializePage() {
-    if (!videoId) {
-        videoTitle.innerText = 'Video not found!';
-        return;
+likeButton.addEventListener('click', () => updateLikeDislikeCount('like'));
+dislikeButton.addEventListener('click', () => updateLikeDislikeCount('dislike'));
+
+firebase.auth().onAuthStateChanged(user => {
+    if (user) {
+        likeButton.disabled = false;
+        dislikeButton.disabled = false;
+        commentSubmit.disabled = false;
+        commentInput.disabled = false;
+    } else {
+        likeButton.disabled = true;
+        dislikeButton.disabled = true;
+        commentSubmit.disabled = true;
+        commentInput.disabled = true;
     }
-    setupAuthStateListener();
-    loadYouTubePlayer();
-    fetchComments();
-    fetchRecommendedVideos();
-}
+});
 
-function setupAuthStateListener() {
-    firebase.auth().onAuthStateChanged(user => {
-        const isAuthenticated = Boolean(user);
-        toggleInteractionButtons(isAuthenticated);
+function checkAuth() {
+    return new Promise((resolve, reject) => {
+        firebase.auth().onAuthStateChanged(user => {
+            if (user) {
+                resolve(user);
+            } else {
+                alert('You must log in to perform this action.');
+                reject(new Error('User not logged in'));
+            }
+        });
     });
-}
-
-function toggleInteractionButtons(enabled) {
-    likeButton.disabled = !enabled;
-    dislikeButton.disabled = !enabled;
-    commentSubmit.disabled = !enabled;
-    commentInput.disabled = !enabled;
-}
-
-async function handleLikeDislike(action) {
-    try {
-        const user = await checkAuth();
-        const userId = user.uid;
-        const userRef = database.ref(`User/${userId}`);
-        const videoRef = database.ref(`LikeOrDislikeCount/${videoId}/${userId}`);
-
-        const userData = (await userRef.once('value')).val();
-        const username = userData?.Username;
-
-        if (!username) throw new Error('Unable to retrieve username.');
-
-        const existingData = (await videoRef.once('value')).val();
-
-        if (existingData?.action === action) {
-            await videoRef.remove();
-        } else {
-            await videoRef.set({ username, action });
-        }
-
-        updateLikeDislikeCountsDisplay();
-    } catch (error) {
-        console.error('Error handling like/dislike:', error);
-    }
-}
-
-async function updateLikeDislikeCountsDisplay() {
-    try {
-        const videoLikesRef = database.ref(`LikeOrDislikeCount/${videoId}`);
-        const data = (await videoLikesRef.once('value')).val() || {};
-
-        const likeCount = Object.values(data).filter(entry => entry.action === 'like').length;
-        const dislikeCount = Object.values(data).filter(entry => entry.action === 'dislike').length;
-
-        likeButton.innerHTML = `<i class="bi bi-hand-thumbs-up"></i> Like (${likeCount})`;
-        dislikeButton.innerHTML = `<i class="bi bi-hand-thumbs-down"></i> Dislike (${dislikeCount})`;
-    } catch (error) {
-        console.error('Error updating like/dislike counts:', error);
-    }
 }
 
 function fetchComments() {
@@ -100,104 +61,183 @@ function fetchComments() {
         const comments = snapshot.val();
         commentsList.innerHTML = '';
         if (comments) {
-            Object.entries(comments).forEach(([id, comment]) => {
-                addCommentToDOM(id, comment);
+            Object.entries(comments).forEach(([commentId, commentData]) => {
+                const commentElement = document.createElement('div');
+                commentElement.className = 'comment';
+                commentElement.innerHTML = `
+                    <div class="d-flex justify-content-between align-items-center">
+                        <strong>${commentData.username}</strong>
+                        ${firebase.auth().currentUser && firebase.auth().currentUser.uid === commentData.userId
+                            ? `<button class="btn btn-danger btn-sm delete-comment" data-id="${commentId}">Delete</button>`
+                            : ''}
+                    </div>
+                    <p>${commentData.text}</p>
+                `;
+                commentsList.appendChild(commentElement);
+            });
+            const deleteButtons = document.querySelectorAll('.delete-comment');
+            deleteButtons.forEach(button => {
+                button.addEventListener('click', () => deleteComment(button.dataset.id));
             });
         }
     });
 }
 
-function addCommentToDOM(commentId, { username, text, userId }) {
-    const commentElement = document.createElement('div');
-    commentElement.className = 'comment';
-    commentElement.innerHTML = `
-        <div class="d-flex justify-content-between align-items-center">
-            <strong>${username}</strong>
-            ${firebase.auth().currentUser?.uid === userId ? `<button class="btn btn-danger btn-sm delete-comment" data-id="${commentId}">Delete</button>` : ''}
-        </div>
-        <p>${text}</p>
-    `;
+commentSubmit.addEventListener('click', () => {
+    checkAuth()
+        .then(user => {
+            const userId = user.uid;
+            const userRef = database.ref(`User/${userId}`);
+            userRef.once('value').then(snapshot => {
+                const userData = snapshot.val();
+                if (userData && userData.Username) {
+                    const username = userData.Username;
+                    const commentText = commentInput.value;
+                    if (commentText.trim() === '') {
+                        alert('Comment cannot be empty.');
+                        return;
+                    }
+                    const commentRef = database.ref(`Comments/${videoId}`).push();
+                    commentRef.set({ userId, username, text: commentText });
+                    commentInput.value = '';
+                } else {
+                    alert('Unable to retrieve username. Please check your account.');
+                }
+            });
+        })
+        .catch(() => {});
+});
 
-    commentElement.querySelector('.delete-comment')?.addEventListener('click', () => deleteComment(commentId));
-    commentsList.appendChild(commentElement);
+function deleteComment(commentId) {
+    checkAuth()
+        .then(() => {
+            const commentRef = database.ref(`Comments/${videoId}/${commentId}`);
+            commentRef.once('value').then(snapshot => {
+                const commentData = snapshot.val();
+                if (commentData && commentData.userId === firebase.auth().currentUser.uid) {
+                    commentRef.remove();
+                } else {
+                    alert('You can only delete your own comments.');
+                }
+            });
+        })
+        .catch(() => {});
 }
 
-async function addComment() {
-    try {
-        const user = await checkAuth();
-        const userId = user.uid;
-        const username = (await database.ref(`User/${userId}`).once('value')).val()?.Username;
-
-        if (!username) throw new Error('Unable to retrieve username.');
-
-        const text = commentInput.value.trim();
-        if (!text) throw new Error('Comment cannot be empty.');
-
-        await database.ref(`Comments/${videoId}`).push({ userId, username, text });
-        commentInput.value = '';
-    } catch (error) {
-        console.error('Error adding comment:', error);
-    }
+function updateLikeDislikeCount(action) {
+    checkAuth()
+        .then(user => {
+            const userId = user.uid;
+            const userRef = database.ref(`User/${userId}`);
+            const videoRef = database.ref(`LikeOrDislikeCount/${videoId}/${userId}`);
+            userRef.once('value').then(snapshot => {
+                const userData = snapshot.val();
+                if (userData && userData.Username) {
+                    const username = userData.Username;
+                    videoRef.once('value').then(snapshot => {
+                        const existingData = snapshot.val();
+                        if (existingData && existingData.action === action) {
+                            videoRef.remove().then(() => updateLikeDislikeCountsDisplay());
+                        } else {
+                            videoRef.set({ username, action }).then(() => updateLikeDislikeCountsDisplay());
+                        }
+                    });
+                } else {
+                    alert('Unable to retrieve username. Please check your account.');
+                }
+            });
+        })
+        .catch(() => {});
 }
 
-async function deleteComment(commentId) {
-    try {
-        const user = await checkAuth();
-        const commentRef = database.ref(`Comments/${videoId}/${commentId}`);
-        const comment = (await commentRef.once('value')).val();
-
-        if (comment?.userId !== user.uid) throw new Error('You can only delete your own comments.');
-
-        await commentRef.remove();
-    } catch (error) {
-        console.error('Error deleting comment:', error);
-    }
-}
-
-async function fetchRecommendedVideos() {
-    try {
-        if (!videoId) return;
-
-        const response = await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&relatedToVideoId=${videoId}&type=video&maxResults=10&key=AIzaSyDKCdoJUDNN-SDhsKn1IbjKYfW3YLP4NIw`);
-        const data = await response.json();
-
-        data.items?.forEach(({ id: { videoId }, snippet }) => {
-            const listItem = document.createElement('li');
-            listItem.innerHTML = `
-                <img src="${snippet.thumbnails.medium.url}" alt="${snippet.title}" class="img-fluid">
-                <div>
-                    <h6>${snippet.title}</h6>
-                    <p>${snippet.channelTitle}</p>
-                </div>
-            `;
-            listItem.addEventListener('click', () => window.location.href = `video.html?videoId=${videoId}`);
-            recommendedList.appendChild(listItem);
-        });
-    } catch (error) {
-        console.error('Error fetching recommended videos:', error);
-    }
-}
-
-function checkAuth() {
-    return new Promise((resolve, reject) => {
-        firebase.auth().onAuthStateChanged(user => user ? resolve(user) : reject(new Error('User not logged in')));
+function updateLikeDislikeCountsDisplay() {
+    const videoLikesRef = database.ref(`LikeOrDislikeCount/${videoId}`);
+    videoLikesRef.once('value').then(snapshot => {
+        const data = snapshot.val();
+        let likeCount = 0;
+        let dislikeCount = 0;
+        if (data) {
+            Object.values(data).forEach(entry => {
+                if (entry.action === 'like') {
+                    likeCount++;
+                } else if (entry.action === 'dislike') {
+                    dislikeCount++;
+                }
+            });
+        }
+        likeButton.innerHTML = `<i class="bi bi-hand-thumbs-up"></i> Like (${likeCount})`;
+        dislikeButton.innerHTML = `<i class="bi bi-hand-thumbs-down"></i> Dislike (${dislikeCount})`;
     });
 }
 
-function loadYouTubePlayer() {
+firebase.auth().setPersistence(firebase.auth.Auth.Persistence.SESSION).catch(error => {
+    console.error('Auth persistence error: ', error);
+});
+
+function onYouTubeIframeAPIReady() {
     if (videoId) {
         player = new YT.Player('player', {
-            videoId,
-            playerVars: { autoplay: 1, controls: 1, rel: 0, modestbranding: 1 },
-            events: { 
-                onReady: updateLikeDislikeCountsDisplay, 
-                onError: (event) => {
-                    console.error('YouTube Player error:', event.data);
-                    videoTitle.innerText = 'Error loading video!';
-                } 
+            videoId: videoId,
+            playerVars: {
+                autoplay: 1,
+                controls: 1,
+                rel: 0,
+                modestbranding: 1
+            },
+            events: {
+                onReady: onPlayerReady,
+                onError: onPlayerError
             }
         });
     } else {
         videoTitle.innerText = 'Video not found!';
     }
 }
+
+function onPlayerReady(event) {
+    event.target.playVideo();
+    const videoData = event.target.getVideoData();
+    const title = videoData.title || 'Untitled Video';
+    document.title = title; // Set page title
+    videoTitle.innerText = title; // Set video section title
+    updateLikeDislikeCountsDisplay();
+    fetchComments();
+}
+
+function onPlayerError(event) {
+    console.error('Error with the YouTube Player:', event.data);
+}
+
+async function fetchRecommendedVideos() {
+    if (!videoId) return;
+    try {
+        const response = fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&relatedToVideoId=${videoId}&type=video&maxResults=10&key=AIzaSyBhMPZUpH_HE_otU_kOWd-Zra91EoayeP0`);
+        const data = await response.json();
+        if (data.items) {
+            data.items.forEach((video) => {
+                const relatedVideoId = video.id.videoId;
+                const videoThumbnail = video.snippet.thumbnails.medium.url;
+                const videoTitle = video.snippet.title;
+                const channelTitle = video.snippet.channelTitle;
+                const listItem = document.createElement('li');
+                listItem.innerHTML = `
+                    <img src="${videoThumbnail}" alt="${videoTitle}" class="img-fluid">
+                    <div>
+                        <h6>${videoTitle}</h6>
+                        <p>${channelTitle}</p>
+                    </div>
+                `;
+                listItem.onclick = () => {
+                    window.location.href = `video.html?videoId=${relatedVideoId}`;
+                };
+                recommendedList.appendChild(listItem);
+            });
+        }
+    } catch (error) {
+        console.error('Error fetching recommended videos:', error);
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    fetchRecommendedVideos();
+});

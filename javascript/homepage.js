@@ -4,8 +4,6 @@ const loadingIndicator = document.getElementById('loading');
 const searchForm = document.getElementById('search-form');
 const searchInput = document.getElementById('search-input');
 const suggestionList = document.getElementById('suggestion-list');
-const regions = ['US', 'CA', 'JP', 'IN', 'GB', 'FR', 'DE', 'AU', 'KR', 'BR'];
-const randomRegion = regions[Math.floor(Math.random() * regions.length)];
 
 let nextPageToken = null;
 let currentSearchQuery = '';
@@ -27,13 +25,16 @@ async function fetchVideos(searchQuery = '', append = false) {
         loadingIndicator.classList.remove('hidden');
         const url = searchQuery
             ? `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(searchQuery)}&type=video&maxResults=50&key=${API_KEY}${nextPageToken ? `&pageToken=${nextPageToken}` : ''}`
-            : `https://www.googleapis.com/youtube/v3/videos?part=snippet&chart=mostPopular&regionCode=${randomRegion}&maxResults=50&key=${API_KEY}${nextPageToken ? `&pageToken=${nextPageToken}` : ''}`;
+            : `https://www.googleapis.com/youtube/v3/videos?part=snippet&chart=mostPopular&maxResults=50&key=${API_KEY}${nextPageToken ? `&pageToken=${nextPageToken}` : ''}`;
+        
         const response = await fetch(url);
         const data = await response.json();
         nextPageToken = data.nextPageToken || null;
         loadingIndicator.classList.add('hidden');
+
         const items = shuffleArray(searchQuery ? data.items.filter(item => item.id.videoId) : data.items);
         if (!append) videoGrid.innerHTML = '';
+        
         items.forEach(({ id, snippet }) => {
             const videoId = searchQuery ? id.videoId : id;
             const videoCard = document.createElement('div');
@@ -119,8 +120,11 @@ document.addEventListener('DOMContentLoaded', () => {
             <li><a class="dropdown-item logout" href="#">Logout</a></li>
         `;
         document.querySelector('.logout').addEventListener('click', () => {
-            localStorage.clear();
-            location.reload();
+            localStorage.removeItem('isLoggedIn');
+            localStorage.removeItem('email');
+            localStorage.removeItem('username');
+            localStorage.removeItem('avatar');
+            window.location.href = 'index.html';
         });
     } else {
         dropdownMenu.innerHTML = `
