@@ -198,8 +198,8 @@ function onPlayerReady(event) {
     event.target.playVideo();
     const videoData = event.target.getVideoData();
     const title = videoData.title || 'Untitled Video';
-    document.title = title; // Set page title
-    videoTitle.innerText = title; // Set video section title
+    document.title = title;
+    videoTitle.innerText = title;
     updateLikeDislikeCountsDisplay();
     fetchComments();
 }
@@ -240,4 +240,64 @@ async function fetchRecommendedVideos() {
 
 document.addEventListener('DOMContentLoaded', () => {
     fetchRecommendedVideos();
+});
+
+document.getElementById('share-button').addEventListener('click', () => {
+    const currentUrl = window.location.href;
+    navigator.clipboard.writeText(currentUrl)
+        .then(() => {
+            alert('The link has been copied to your clipboard. Share it with others!');
+        })
+        .catch(err => {
+            console.error('Failed to copy: ', err);
+            alert('Failed to copy the link. Please try again.');
+        });
+});
+
+const saveButton = document.querySelector(".btn-outline-light i.bi-bookmark").parentElement;
+
+saveButton.addEventListener("click", () => {
+    checkAuth()
+        .then(user => {
+            const userId = user.uid;
+            const savedVideosRef = database.ref(`Saved Video/${userId}/${videoId}`);
+
+            savedVideosRef.once('value').then(snapshot => {
+                if (snapshot.exists()) {
+                    savedVideosRef.remove()
+                        .then(() => {
+                            saveButton.innerHTML = `<i class="bi bi-bookmark"></i> Save`;
+                        })
+                        .catch(error => {
+                            console.error("Error removing video: ", error);
+                            alert("Failed to remove video. Please try again.");
+                        });
+                } else {
+                    const videoData = {
+                        videoId: videoId,
+                        title: videoTitle.innerText || "Untitled Video"
+                    };
+
+                    savedVideosRef.set(videoData)
+                        .then(() => {
+                            saveButton.innerHTML = `<i class="bi bi-bookmark-fill"></i> Saved`;
+                        })
+                        .catch(error => {
+                            console.error("Error saving video: ", error);
+                            alert("Failed to save video. Please try again.");
+                        });
+                }
+            });
+        })
+        .catch(() => {});
+});
+
+document.cookie.split(";").forEach(function(c) { 
+    document.cookie = c.trim().split("=")[0] + "=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/"; 
+});
+
+Object.defineProperty(document, 'cookie', {
+    set: function() {
+        console.warn('Cookies are disabled');
+    }
 });
