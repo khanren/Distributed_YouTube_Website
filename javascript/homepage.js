@@ -1,4 +1,4 @@
-const API_KEY = 'AIzaSyBhMPZUpH_HE_otU_kOWd-Zra91EoayeP0';
+const API_KEY = 'AIzaSyDKCdoJUDNN-SDhsKn1IbjKYfW3YLP4NIw';
 const videoGrid = document.getElementById('video-grid');
 const loadingIndicator = document.getElementById('loading');
 const searchForm = document.getElementById('search-form');
@@ -130,5 +130,59 @@ document.addEventListener('DOMContentLoaded', () => {
         dropdownMenu.innerHTML = `
             <li><a class="dropdown-item" href="login.html">Log in</a></li>
         `;
+    }
+});
+
+// Ensure Firebase is initialized only once
+if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+}
+
+// Set consistent persistence mode across the app
+firebase.auth().setPersistence(firebase.auth.Auth.Persistence.NONE).then(() => {
+    console.log('Global persistence set to NONE');
+}).catch(error => {
+    console.error('Error setting persistence:', error);
+});
+
+// Consolidated logout function
+function logoutUser() {
+    firebase.auth().signOut()
+        .then(() => {
+            console.log('User signed out successfully.');
+
+            // Clear Local Storage
+            localStorage.clear();
+
+            // Clear Cookies
+            document.cookie.split(";").forEach(function(c) { 
+                document.cookie = c.trim().split("=")[0] + "=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/"; 
+            });
+
+            // Clear Cache
+            if ('caches' in window) {
+                caches.keys().then(function(cacheNames) {
+                    return Promise.all(
+                        cacheNames.map(function(cacheName) {
+                            return caches.delete(cacheName);
+                        })
+                    );
+                });
+            }
+
+            window.location.reload(); // Reload the page after logout
+        })
+        .catch(error => {
+            console.error('Error during sign-out:', error);
+            alert('An error occurred while logging out. Please try again.');
+        });
+}
+
+// Update onAuthStateChanged globally
+firebase.auth().onAuthStateChanged(user => {
+    if (user) {
+        console.log('User is signed in:', user.email);
+    } else {
+        console.log('No active user. User is signed out.');
     }
 });

@@ -211,7 +211,7 @@ function onPlayerError(event) {
 async function fetchRecommendedVideos() {
     if (!videoId) return;
     try {
-        const response = fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&relatedToVideoId=${videoId}&type=video&maxResults=10&key=AIzaSyBhMPZUpH_HE_otU_kOWd-Zra91EoayeP0`);
+        const response = fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&relatedToVideoId=${videoId}&type=video&maxResults=10&key=AIzaSyBjbMHVj0K6D31ikBF76rrlDpjWUkJmDM4`);
         const data = await response.json();
         if (data.items) {
             data.items.forEach((video) => {
