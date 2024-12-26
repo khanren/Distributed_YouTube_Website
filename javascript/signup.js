@@ -1,3 +1,4 @@
+// Firebase Configuration
 var firebaseConfig = {
     apiKey: "AIzaSyCCoYF6WOiJF6aUDDf0bbAH5OjE64jr064",
     authDomain: "distributed-4f324.firebaseapp.com",
@@ -9,20 +10,20 @@ var firebaseConfig = {
     databaseURL: "https://distributed-4f324-default-rtdb.asia-southeast1.firebasedatabase.app/"
 };
 
+// Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 
+// Firebase Services
 const auth = firebase.auth();
-const database = firebase.database();
+const database = firebase.database(); // Ensure Firebase is initialized before accessing database
 
+// Email format validation function
 function isValidEmail(email) {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
 }
 
-function sanitizeEmail(email) {
-    return email.replace(/[.#$[\]]/g, ',');
-}
-
+// Sign-Up Function
 function signUp() {
     var username = document.getElementById("username").value;
     var email = document.getElementById("email").value;
@@ -48,24 +49,22 @@ function signUp() {
                     .then((userCredential) => {
                         const user = userCredential.user;
                         const uid = user.uid;
+                        alert("Sign-up successful! A verification email has been sent to your mailbox. Please verify your email before logging in.");
 
                         user.sendEmailVerification()
                             .then(() => {
-                                alert("SignUp Successful! A verification email has been sent.");
+                                alert("Sign-up successful! A verification email has been sent to your mailbox. Please verify your email before logging in.");
                             })
                             .catch((error) => {
                                 console.error("Error sending verification email:", error);
                                 alert("Error sending verification email: " + error.message);
                             });
 
-                        // Sanitize email for use as Firebase key
-                        const sanitizedEmail = sanitizeEmail(email);
-
-                        // Save user data under the email node
+                        const sanitizedEmail = email.replace(/[.#$[\]]/g, ',');
                         database.ref('User/' + sanitizedEmail).set({
                             UID: uid,
                             Username: username,
-                            Password: password
+                            Email: email
                         })
                         .then(() => {
                             console.log("User data saved successfully!");

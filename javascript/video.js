@@ -130,7 +130,7 @@ function onPlayerError(event) {
 async function fetchRecommendedVideos() {
     if (!videoId) return;
     try {
-        const response = fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&relatedToVideoId=${videoId}&type=video&maxResults=10&key=AIzaSyBjbMHVj0K6D31ikBF76rrlDpjWUkJmDM4`);
+        const response = fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&relatedToVideoId=${videoId}&type=video&maxResults=10&key=AIzaSyDKCdoJUDNN-SDhsKn1IbjKYfW3YLP4NIw`);
         const data = await response.json();
         if (data.items) {
             data.items.forEach((video) => {
