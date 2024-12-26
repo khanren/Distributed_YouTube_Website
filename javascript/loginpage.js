@@ -21,7 +21,7 @@ function signIn(event) {
             if (userCredential.user.emailVerified) {
                 localStorage.setItem("isLoggedIn", "true");
                 localStorage.setItem("email", userCredential.user.email);
-                localStorage.setItem("uid", userCredential.user.uid); // Save the Firebase UID to local storage
+                localStorage.setItem("uid", userCredential.user.uid); 
                 window.location.href = "index.html";
             } else {
                 alert("Please verify your email before logging in.");
