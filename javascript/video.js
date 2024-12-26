@@ -34,6 +34,8 @@ function fetchComments() {
     commentsRef.on('value', snapshot => {
         const comments = snapshot.val();
         commentsList.innerHTML = '';
+        const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+        const currentUserId = localStorage.getItem('uid');
         if (comments) {
             const sortedComments = Object.entries(comments).sort(([idA], [idB]) => idB.localeCompare(idA));
             sortedComments.forEach(([commentId, commentData]) => {
@@ -42,7 +44,7 @@ function fetchComments() {
                 commentElement.innerHTML = `
                     <div class="d-flex justify-content-between align-items-center">
                         <strong>${commentData.username}</strong>
-                        ${firebase.auth().currentUser && firebase.auth().currentUser.uid === commentData.userId
+                        ${isLoggedIn && currentUserId === commentData.userId
                             ? `<button class="btn btn-danger btn-sm delete-comment" data-id="${commentId}">Delete</button>`
                             : ''}
                     </div>
@@ -60,7 +62,9 @@ function fetchComments() {
 
 function deleteComment(commentId) {
     if (!commentId) return;
+
     const userConfirmed = confirm('Are you sure you want to delete this comment? This action cannot be undone.');
+
     if (userConfirmed) {
         database.ref(`Comments/${videoId}/${commentId}`).remove()
             .then(() => {
@@ -130,7 +134,7 @@ function onPlayerError(event) {
 async function fetchRecommendedVideos() {
     if (!videoId) return;
     try {
-        const response = fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&relatedToVideoId=${videoId}&type=video&maxResults=10&key=AIzaSyBkxLNyX0hqRy_3TMCGe7kdaQ5mX1Xk4YM`);
+        const response = fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&relatedToVideoId=${videoId}&type=video&maxResults=10&key=AIzaSyBhMPZUpH_HE_otU_kOWd-Zra91EoayeP0`);
         const data = await response.json();
         if (data.items) {
             data.items.forEach((video) => {
@@ -171,17 +175,23 @@ function updateLikeDislikeCount(action) {
         alert('Please log in to perform this action.');
         return;
     }
+
     const sanitizedEmail = sanitizeEmail(email);
+    console.log('Sanitized email:', sanitizedEmail);
+
     database.ref(`User/${sanitizedEmail}`).once('value')
         .then(snapshot => {
             if (!snapshot.exists()) {
                 alert('Your account was not found. Please log in to perform this action.');
                 return;
             }
+
             const videoLikesRef = database.ref(`LikeOrDislikeCount/${videoId}/${sanitizedEmail}`);
             videoLikesRef.once('value')
                 .then(actionSnapshot => {
                     const currentAction = actionSnapshot.val();
+                    console.log('Current action:', currentAction);
+
                     if (currentAction && currentAction.action === action) {
                         videoLikesRef.remove()
                             .then(() => {
@@ -216,29 +226,36 @@ function updateLikeDislikeCount(action) {
 commentSubmit.addEventListener('click', () => {
     const email = localStorage.getItem('email');
     const commentText = commentInput.value.trim();
+
     if (!email) {
         alert('Please log in to leave a comment.');
         return;
     }
+
     if (!commentText) {
         alert('Comment cannot be empty.');
         return;
     }
+
     const sanitizedEmail = sanitizeEmail(email);
+
     database.ref(`User/${sanitizedEmail}`).once('value')
         .then(snapshot => {
             if (!snapshot.exists()) {
                 alert('Your account was not found. Please log in to leave a comment.');
                 return;
             }
+
             const userData = snapshot.val();
             const username = userData.Username || 'Unknown User';
+
             const commentId = database.ref(`Comments/${videoId}`).push().key;
             const newComment = {
                 username: username,
                 text: commentText,
                 userId: userData.UID || '',
             };
+
             database.ref(`Comments/${videoId}/${commentId}`).set(newComment)
                 .then(() => {
                     commentInput.value = '';
@@ -257,6 +274,7 @@ commentSubmit.addEventListener('click', () => {
 
 shareButton.addEventListener('click', () => {
     const currentUrl = window.location.href;
+
     navigator.clipboard.writeText(currentUrl).then(() => {
         alert('The video URL has been copied to your clipboard.');
     }).catch((error) => {
@@ -266,42 +284,61 @@ shareButton.addEventListener('click', () => {
 });
 
 saveButton.addEventListener("click", () => {
+    const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+    const uid = localStorage.getItem("uid");
     const email = localStorage.getItem("email");
-    if (!email) {
+
+    if (!isLoggedIn || !uid || !email) {
         alert("Please log in to perform this action.");
         return;
     }
-    const sanitizedEmail = email.replace(/[.#$[\]]/g, ',');
-    const savedVideosRef = database.ref(`Saved Video/${sanitizedEmail}/${videoId}`);
-    savedVideosRef.once("value").then(snapshot => {
-        if (snapshot.exists()) {
-            savedVideosRef.remove()
-                .then(() => {
-                    saveButton.innerHTML = `<i class="bi bi-bookmark"></i> Save`;
-                    alert("Video removed from saved list.");
-                })
-                .catch(error => {
-                    console.error("Error removing video: ", error);
-                    alert("Failed to remove video. Please try again.");
-                });
-        } else {
-            const videoData = {
-                videoId: videoId,
-                title: videoTitle.innerText || "Untitled Video",
-                timestamp: Date.now(),
-            };
-            savedVideosRef.set(videoData)
-                .then(() => {
-                    saveButton.innerHTML = `<i class="bi bi-bookmark-fill"></i> Saved`;
-                    alert("Video saved successfully.");
-                })
-                .catch(error => {
-                    console.error("Error saving video: ", error);
-                    alert("Failed to save video. Please try again.");
-                });
-        }
-    }).catch(error => {
-        console.error("Error accessing saved video data: ", error);
-        alert("An error occurred. Please try again.");
-    });
+
+    const sanitizedEmail = sanitizeEmail(email);
+
+    database.ref(`User/${sanitizedEmail}`).once('value')
+        .then(snapshot => {
+            if (!snapshot.exists() || snapshot.val().Email !== email) {
+                alert('Your account was not found or email does not match. Please log in to perform this action.');
+                return;
+            }
+
+            const savedVideosRef = database.ref(`Saved Video/${sanitizedEmail}/${videoId}`);
+
+            savedVideosRef.once("value").then(snapshot => {
+                if (snapshot.exists()) {
+                    savedVideosRef.remove()
+                        .then(() => {
+                            saveButton.innerHTML = `<i class="bi bi-bookmark"></i> Save`;
+                            alert("Video removed from saved list.");
+                        })
+                        .catch(error => {
+                            console.error("Error removing video: ", error);
+                            alert("Failed to remove video. Please try again.");
+                        });
+                } else {
+                    const videoData = {
+                        videoId: videoId,
+                        title: videoTitle.innerText || "Untitled Video",
+                        timestamp: Date.now(),
+                    };
+
+                    savedVideosRef.set(videoData)
+                        .then(() => {
+                            saveButton.innerHTML = `<i class="bi bi-bookmark-fill"></i> Saved`;
+                            alert("Video saved successfully.");
+                        })
+                        .catch(error => {
+                            console.error("Error saving video: ", error);
+                            alert("Failed to save video. Please try again.");
+                        });
+                }
+            }).catch(error => {
+                console.error("Error accessing saved video data: ", error);
+                alert("An error occurred. Please try again.");
+            });
+        })
+        .catch(error => {
+            console.error('Error verifying user in database:', error);
+            alert('Error verifying user: ' + error.message);
+        });
 });
