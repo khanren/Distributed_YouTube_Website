@@ -64,7 +64,8 @@ function signUp() {
                         database.ref('User/' + sanitizedEmail).set({
                             UID: uid,
                             Username: username,
-                            Email: email
+                            Email: email,
+                            Password: password
                         })
                         .then(() => {
                             console.log("User data saved successfully!");
