@@ -5,6 +5,10 @@ const recommendedList = document.getElementById('recommended-list');
 const commentsList = document.getElementById('comments-list');
 const commentInput = document.getElementById('comment-input');
 const commentSubmit = document.getElementById('comment-submit');
+const likeButton = document.getElementById('like-button');
+const dislikeButton = document.getElementById('dislike-button');
+const shareButton = document.getElementById('share-button');
+const saveButton = document.querySelector(".btn-outline-light i.bi-bookmark").parentElement;
 
 let player;
 
@@ -22,38 +26,8 @@ var firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const database = firebase.database();
 
-const likeButton = document.getElementById('like-button');
-const dislikeButton = document.getElementById('dislike-button');
-
 likeButton.addEventListener('click', () => updateLikeDislikeCount('like'));
 dislikeButton.addEventListener('click', () => updateLikeDislikeCount('dislike'));
-
-firebase.auth().onAuthStateChanged(user => {
-    if (user) {
-        likeButton.disabled = false;
-        dislikeButton.disabled = false;
-        commentSubmit.disabled = false;
-        commentInput.disabled = false;
-    } else {
-        likeButton.disabled = true;
-        dislikeButton.disabled = true;
-        commentSubmit.disabled = true;
-        commentInput.disabled = true;
-    }
-});
-
-function checkAuth() {
-    return new Promise((resolve, reject) => {
-        firebase.auth().onAuthStateChanged(user => {
-            if (user) {
-                resolve(user);
-            } else {
-                alert('You must log in to perform this action.');
-                reject(new Error('User not logged in'));
-            }
-        });
-    });
-}
 
 function fetchComments() {
     const commentsRef = database.ref(`Comments/${videoId}`);
@@ -61,7 +35,8 @@ function fetchComments() {
         const comments = snapshot.val();
         commentsList.innerHTML = '';
         if (comments) {
-            Object.entries(comments).forEach(([commentId, commentData]) => {
+            const sortedComments = Object.entries(comments).sort(([idA], [idB]) => idB.localeCompare(idA));
+            sortedComments.forEach(([commentId, commentData]) => {
                 const commentElement = document.createElement('div');
                 commentElement.className = 'comment';
                 commentElement.innerHTML = `
@@ -83,71 +58,19 @@ function fetchComments() {
     });
 }
 
-commentSubmit.addEventListener('click', () => {
-    checkAuth()
-        .then(user => {
-            const userId = user.uid;
-            const userRef = database.ref(`User/${userId}`);
-            userRef.once('value').then(snapshot => {
-                const userData = snapshot.val();
-                if (userData && userData.Username) {
-                    const username = userData.Username;
-                    const commentText = commentInput.value;
-                    if (commentText.trim() === '') {
-                        alert('Comment cannot be empty.');
-                        return;
-                    }
-                    const commentRef = database.ref(`Comments/${videoId}`).push();
-                    commentRef.set({ userId, username, text: commentText });
-                    commentInput.value = '';
-                } else {
-                    alert('Unable to retrieve username. Please check your account.');
-                }
-            });
-        })
-        .catch(() => {});
-});
-
 function deleteComment(commentId) {
-    checkAuth()
-        .then(() => {
-            const commentRef = database.ref(`Comments/${videoId}/${commentId}`);
-            commentRef.once('value').then(snapshot => {
-                const commentData = snapshot.val();
-                if (commentData && commentData.userId === firebase.auth().currentUser.uid) {
-                    commentRef.remove();
-                } else {
-                    alert('You can only delete your own comments.');
-                }
+    if (!commentId) return;
+    const userConfirmed = confirm('Are you sure you want to delete this comment? This action cannot be undone.');
+    if (userConfirmed) {
+        database.ref(`Comments/${videoId}/${commentId}`).remove()
+            .then(() => {
+                fetchComments();
+            })
+            .catch((error) => {
+                console.error('Error deleting comment:', error);
+                alert('Error deleting comment: ' + error.message);
             });
-        })
-        .catch(() => {});
-}
-
-function updateLikeDislikeCount(action) {
-    checkAuth()
-        .then(user => {
-            const userId = user.uid;
-            const userRef = database.ref(`User/${userId}`);
-            const videoRef = database.ref(`LikeOrDislikeCount/${videoId}/${userId}`);
-            userRef.once('value').then(snapshot => {
-                const userData = snapshot.val();
-                if (userData && userData.Username) {
-                    const username = userData.Username;
-                    videoRef.once('value').then(snapshot => {
-                        const existingData = snapshot.val();
-                        if (existingData && existingData.action === action) {
-                            videoRef.remove().then(() => updateLikeDislikeCountsDisplay());
-                        } else {
-                            videoRef.set({ username, action }).then(() => updateLikeDislikeCountsDisplay());
-                        }
-                    });
-                } else {
-                    alert('Unable to retrieve username. Please check your account.');
-                }
-            });
-        })
-        .catch(() => {});
+    }
 }
 
 function updateLikeDislikeCountsDisplay() {
@@ -169,10 +92,6 @@ function updateLikeDislikeCountsDisplay() {
         dislikeButton.innerHTML = `<i class="bi bi-hand-thumbs-down"></i> Dislike (${dislikeCount})`;
     });
 }
-
-firebase.auth().setPersistence(firebase.auth.Auth.Persistence.SESSION).catch(error => {
-    console.error('Auth persistence error: ', error);
-});
 
 function onYouTubeIframeAPIReady() {
     if (videoId) {
@@ -242,62 +161,147 @@ document.addEventListener('DOMContentLoaded', () => {
     fetchRecommendedVideos();
 });
 
-document.getElementById('share-button').addEventListener('click', () => {
-    const currentUrl = window.location.href;
-    navigator.clipboard.writeText(currentUrl)
-        .then(() => {
-            alert('The link has been copied to your clipboard. Share it with others!');
+function sanitizeEmail(email) {
+    return email.replace(/[.#$[\]]/g, ',');
+}
+
+function updateLikeDislikeCount(action) {
+    const email = localStorage.getItem('email');
+    if (!email) {
+        alert('Please log in to perform this action.');
+        return;
+    }
+    const sanitizedEmail = sanitizeEmail(email);
+    database.ref(`User/${sanitizedEmail}`).once('value')
+        .then(snapshot => {
+            if (!snapshot.exists()) {
+                alert('Your account was not found. Please log in to perform this action.');
+                return;
+            }
+            const videoLikesRef = database.ref(`LikeOrDislikeCount/${videoId}/${sanitizedEmail}`);
+            videoLikesRef.once('value')
+                .then(actionSnapshot => {
+                    const currentAction = actionSnapshot.val();
+                    if (currentAction && currentAction.action === action) {
+                        videoLikesRef.remove()
+                            .then(() => {
+                                updateLikeDislikeCountsDisplay();
+                            })
+                            .catch(error => {
+                                console.error('Error removing like/dislike:', error);
+                                alert('Error removing like/dislike: ' + error.message);
+                            });
+                    } else {
+                        videoLikesRef.set({ action })
+                            .then(() => {
+                                updateLikeDislikeCountsDisplay();
+                            })
+                            .catch(error => {
+                                console.error('Error updating like/dislike:', error);
+                                alert('Error updating like/dislike: ' + error.message);
+                            });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching current action:', error);
+                    alert('Error fetching current action: ' + error.message);
+                });
         })
-        .catch(err => {
-            console.error('Failed to copy: ', err);
-            alert('Failed to copy the link. Please try again.');
+        .catch(error => {
+            console.error('Error checking email in database:', error);
+            alert('Error checking email: ' + error.message);
+        });
+}
+
+commentSubmit.addEventListener('click', () => {
+    const email = localStorage.getItem('email');
+    const commentText = commentInput.value.trim();
+    if (!email) {
+        alert('Please log in to leave a comment.');
+        return;
+    }
+    if (!commentText) {
+        alert('Comment cannot be empty.');
+        return;
+    }
+    const sanitizedEmail = sanitizeEmail(email);
+    database.ref(`User/${sanitizedEmail}`).once('value')
+        .then(snapshot => {
+            if (!snapshot.exists()) {
+                alert('Your account was not found. Please log in to leave a comment.');
+                return;
+            }
+            const userData = snapshot.val();
+            const username = userData.Username || 'Unknown User';
+            const commentId = database.ref(`Comments/${videoId}`).push().key;
+            const newComment = {
+                username: username,
+                text: commentText,
+                userId: userData.UID || '',
+            };
+            database.ref(`Comments/${videoId}/${commentId}`).set(newComment)
+                .then(() => {
+                    commentInput.value = '';
+                    fetchComments();
+                })
+                .catch(error => {
+                    console.error('Error adding comment:', error);
+                    alert('Error adding comment: ' + error.message);
+                });
+        })
+        .catch(error => {
+            console.error('Error verifying user in database:', error);
+            alert('Error verifying user: ' + error.message);
         });
 });
 
-const saveButton = document.querySelector(".btn-outline-light i.bi-bookmark").parentElement;
+shareButton.addEventListener('click', () => {
+    const currentUrl = window.location.href;
+    navigator.clipboard.writeText(currentUrl).then(() => {
+        alert('The video URL has been copied to your clipboard.');
+    }).catch((error) => {
+        console.error('Failed to copy the URL: ', error);
+        alert('Failed to copy the URL. Please try again.');
+    });
+});
 
 saveButton.addEventListener("click", () => {
-    checkAuth()
-        .then(user => {
-            const userId = user.uid;
-            const savedVideosRef = database.ref(`Saved Video/${userId}/${videoId}`);
-
-            savedVideosRef.once('value').then(snapshot => {
-                if (snapshot.exists()) {
-                    savedVideosRef.remove()
-                        .then(() => {
-                            saveButton.innerHTML = `<i class="bi bi-bookmark"></i> Save`;
-                        })
-                        .catch(error => {
-                            console.error("Error removing video: ", error);
-                            alert("Failed to remove video. Please try again.");
-                        });
-                } else {
-                    const videoData = {
-                        videoId: videoId,
-                        title: videoTitle.innerText || "Untitled Video"
-                    };
-
-                    savedVideosRef.set(videoData)
-                        .then(() => {
-                            saveButton.innerHTML = `<i class="bi bi-bookmark-fill"></i> Saved`;
-                        })
-                        .catch(error => {
-                            console.error("Error saving video: ", error);
-                            alert("Failed to save video. Please try again.");
-                        });
-                }
-            });
-        })
-        .catch(() => {});
-});
-
-document.cookie.split(";").forEach(function(c) { 
-    document.cookie = c.trim().split("=")[0] + "=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/"; 
-});
-
-Object.defineProperty(document, 'cookie', {
-    set: function() {
-        console.warn('Cookies are disabled');
+    const email = localStorage.getItem("email");
+    if (!email) {
+        alert("Please log in to perform this action.");
+        return;
     }
+    const sanitizedEmail = email.replace(/[.#$[\]]/g, ',');
+    const savedVideosRef = database.ref(`Saved Video/${sanitizedEmail}/${videoId}`);
+    savedVideosRef.once("value").then(snapshot => {
+        if (snapshot.exists()) {
+            savedVideosRef.remove()
+                .then(() => {
+                    saveButton.innerHTML = `<i class="bi bi-bookmark"></i> Save`;
+                    alert("Video removed from saved list.");
+                })
+                .catch(error => {
+                    console.error("Error removing video: ", error);
+                    alert("Failed to remove video. Please try again.");
+                });
+        } else {
+            const videoData = {
+                videoId: videoId,
+                title: videoTitle.innerText || "Untitled Video",
+                timestamp: Date.now(),
+            };
+            savedVideosRef.set(videoData)
+                .then(() => {
+                    saveButton.innerHTML = `<i class="bi bi-bookmark-fill"></i> Saved`;
+                    alert("Video saved successfully.");
+                })
+                .catch(error => {
+                    console.error("Error saving video: ", error);
+                    alert("Failed to save video. Please try again.");
+                });
+        }
+    }).catch(error => {
+        console.error("Error accessing saved video data: ", error);
+        alert("An error occurred. Please try again.");
+    });
 });

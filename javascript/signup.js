@@ -19,6 +19,10 @@ function isValidEmail(email) {
     return emailRegex.test(email);
 }
 
+function sanitizeEmail(email) {
+    return email.replace(/[.#$[\]]/g, ',');
+}
+
 function signUp() {
     var username = document.getElementById("username").value;
     var email = document.getElementById("email").value;
@@ -54,10 +58,13 @@ function signUp() {
                                 alert("Error sending verification email: " + error.message);
                             });
 
-                        database.ref('User/' + uid).set({
+                        // Sanitize email for use as Firebase key
+                        const sanitizedEmail = sanitizeEmail(email);
+
+                        // Save user data under the email node
+                        database.ref('User/' + sanitizedEmail).set({
                             UID: uid,
                             Username: username,
-                            Email: email,
                             Password: password
                         })
                         .then(() => {

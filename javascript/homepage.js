@@ -133,35 +133,35 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// Consolidated logout function
 function logoutUser() {
-    firebase.auth().signOut()
-        .then(() => {
-            console.log('User signed out successfully.');
+    // Check if the user is logged in using isLoggedIn
+    if (localStorage.getItem("isLoggedIn") === "true") {
+        console.log('Logging out user...');
 
-            // Clear Local Storage
-            localStorage.clear();
+        // Clear all Local Storage keys
+        localStorage.clear();
 
-            // Clear Cookies
-            document.cookie.split(";").forEach(function(c) { 
-                document.cookie = c.trim().split("=")[0] + "=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/"; 
-            });
-
-            // Clear Cache
-            if ('caches' in window) {
-                caches.keys().then(function(cacheNames) {
-                    return Promise.all(
-                        cacheNames.map(function(cacheName) {
-                            return caches.delete(cacheName);
-                        })
-                    );
-                });
-            }
-
-            window.location.reload(); // Reload the page after logout
-        })
-        .catch(error => {
-            console.error('Error during sign-out:', error);
-            alert('An error occurred while logging out. Please try again.');
+        // Clear Cookies
+        document.cookie.split(";").forEach(function(c) { 
+            document.cookie = c.trim().split("=")[0] + "=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/"; 
         });
+
+        // Clear Cache
+        if ('caches' in window) {
+            caches.keys().then(function(cacheNames) {
+                return Promise.all(
+                    cacheNames.map(function(cacheName) {
+                        return caches.delete(cacheName);
+                    })
+                );
+            });
+        }
+
+        // Redirect or reload after logout
+        console.log('User logged out successfully.');
+        window.location.href = "login.html"; // Redirect to login page
+    } else {
+        console.log('No user is currently logged in.');
+        alert('No user is currently logged in.');
+    }
 }
