@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Settings</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <link href="css/settings_page.css" rel="stylesheet">
+    <script src="javascript/settings_page.js" defer></script>
+</head>
+<body>
+    <div class="container right-panel-active">
+        <!-- PFP -->
+        <div class="container__form container--pfp">
+          <form action="#" class="form" id="pfp" method="POST" enctype="multipart/form-data">
+            <h2 class="form__title">Change Profile Picture</h2>
+            <div class="pfp-logo text-center">
+                <img src="" alt="User current/new pfp displayed here" width="100">
+            </div>
+            <input id="file-upload" type="file" name="fileUpload" accept="image/png, image/jpg"/>
+            <button class="btn">Change Picture</button>
+          </form>
+        </div>
+      
+        <!-- Sign In -->
+        <div class="container__form container--username">
+          <form action="#" class="form" id="username" method="POST">
+            <h2 class="form__title">Change Username</h2>
+            <!--Do backend to check for existing username and display can or cannot change-->
+            <input type="text" placeholder="New Username" class="input" />
+            <button class="btn">Change Username</button>
+          </form>
+        </div>
+      
+        <!-- Overlay -->
+        <div class="container__overlay">
+          <div class="overlay">
+            <div class="overlay__panel overlay--left">
+              <button class="btn" id="nameBtn">Username</button>
+            </div>
+            <div class="overlay__panel overlay--right">
+              <button class="btn" id="pfpBtn">Profile Picture</button>
+            </div>
+          </div>
+        </div>
+      </div>
+</body>
+</html>
