@@ -125,3 +125,32 @@ aside .nav-link:hover {
     font-size: 12px;
     color: #aaa;
 }
+
+#search-form {
+    position: relative;
+}
+
+#suggestion-list {
+    position: absolute;
+    top: 100%; /* Aligns the list directly below the input field */
+    left: 0;
+    z-index: 1050; /* Ensures it appears above other elements */
+    width: 100%;
+    background-color: #333;
+    color: #fff;
+    border: 1px solid #444;
+    border-top: none;
+    max-height: 200px; /* Prevents the list from getting too long */
+    overflow-y: auto; /* Adds scroll for long lists */
+    padding: 0;
+    margin: 0;
+}
+
+#suggestion-list li {
+    padding: 10px;
+    cursor: pointer;
+}
+
+#suggestion-list li:hover {
+    background-color: #555;
+}
