@@ -113,7 +113,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (isLoggedIn) {
         userAvatar.src = avatar || 'https://via.placeholder.com/40';
         dropdownMenu.innerHTML = `
-            <li><a class="dropdown-item" href="#">Settings</a></li>
+            <li><a class="dropdown-item" href="settings.html">Settings</a></li>
             <li><hr class="dropdown-divider"></li>
             <li><a class="dropdown-item logout" href="#">Logout</a></li>
         `;
@@ -125,6 +125,14 @@ document.addEventListener('DOMContentLoaded', () => {
             localStorage.removeItem('uid'); // Remove the uid from local storage
             window.location.href = 'index.html';
         });
+        document.querySelector('.dropdown-item[href="settings.html"]').addEventListener('click', (e) => {
+            e.preventDefault();
+            if (isLoggedIn) {
+                window.location.href = 'settings.html';
+            } else {
+                alert('You need to be logged in to access the settings page.');
+            }
+        });
     } else {
         dropdownMenu.innerHTML = `
             <li><a class="dropdown-item" href="login.html">Log in</a></li>
@@ -133,19 +141,15 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function logoutUser() {
-    // Check if the user is logged in using isLoggedIn
     if (localStorage.getItem("isLoggedIn") === "true") {
         console.log('Logging out user...');
 
-        // Clear all Local Storage keys
         localStorage.clear();
 
-        // Clear Cookies
         document.cookie.split(";").forEach(function(c) { 
             document.cookie = c.trim().split("=")[0] + "=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/"; 
         });
 
-        // Clear Cache
         if ('caches' in window) {
             caches.keys().then(function(cacheNames) {
                 return Promise.all(
@@ -156,9 +160,8 @@ function logoutUser() {
             });
         }
 
-        // Redirect or reload after logout
         console.log('User logged out successfully.');
-        window.location.href = "login.html"; // Redirect to login page
+        window.location.href = "login.html";
     } else {
         console.log('No user is currently logged in.');
         alert('No user is currently logged in.');
