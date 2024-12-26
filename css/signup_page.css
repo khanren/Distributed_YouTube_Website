@@ -26,6 +26,7 @@ body {
     text-align: center;
     margin-bottom: 20px;
     color: #ff4d4d;
+    font-weight: bold;
 }
 
 .form-control {
