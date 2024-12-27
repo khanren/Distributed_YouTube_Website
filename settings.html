@@ -13,40 +13,59 @@
     <script src="javascript/settings_page.js" defer></script>
 </head>
 <body>
-    <div class="container right-panel-active">
-        <!-- PFP -->
-        <div class="container__form container--pfp">
-          <form action="#" class="form" id="pfp" method="POST" enctype="multipart/form-data">
-            <h2 class="form__title">Change Profile Picture</h2>
-            <div class="pfp-logo text-center">
-                <img src="" alt="User current/new pfp displayed here" width="100">
+  <section>
+    <header>
+        <h2>Profile Information</h2>
+        <p>Update your account's profile information, email address, and profile picture.</p><br>
+    </header>
+
+    <form method="post" action="/update-profile" enctype="multipart/form-data" class="mt-6 space-y-6">
+        <div class="profile-pic">
+            <img src="default-avatar.jpg" alt="Profile Picture" id="profilePreview">
+            <div class="change-pic">
+                <label for="profilePic">Change Profile Picture</label>
+                <input type="file" id="profilePic" style="display: none;" name="profilePic" accept="image/*" onchange="previewProfilePicture(event)">
+                <button type="button" class="custom-file-btn" onclick="document.getElementById('profilePic').click();">Choose picture</button>
             </div>
-            <input id="file-upload" type="file" name="fileUpload" accept="image/png, image/jpg"/>
-            <button class="btn">Change Picture</button>
-          </form>
+        </div><br>
+
+        <div>
+            <label for="name">Name</label>
+            <input id="name" name="name" type="text" value="John Doe" required>
         </div>
-      
-        <!-- Sign In -->
-        <div class="container__form container--username">
-          <form action="#" class="form" id="username" method="POST">
-            <h2 class="form__title">Change Username</h2>
-            <!--Do backend to check for existing username and display can or cannot change-->
-            <input type="text" placeholder="New Username" class="input" />
-            <button class="btn">Change Username</button>
-          </form>
+
+        <div>
+            <label for="email">Email</label>
+            <input id="email" name="email" type="email" value="john.doe@example.com" required>
+        </div><br>
+
+        <div class="save-container">
+            <button type="submit">Save</button>
+            <p id="successMessage" class="success-message" style="display: none;">Saved successfully.</p>
         </div>
-      
-        <!-- Overlay -->
-        <div class="container__overlay">
-          <div class="overlay">
-            <div class="overlay__panel overlay--left">
-              <button class="btn" id="nameBtn">Username</button>
-            </div>
-            <div class="overlay__panel overlay--right">
-              <button class="btn" id="pfpBtn">Profile Picture</button>
-            </div>
-          </div>
-        </div>
-      </div>
+    </form>
+</section>
+
+<script>
+    function previewProfilePicture(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('profilePreview').src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+
+    // Mock saving functionality
+    document.querySelector('form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        document.getElementById('successMessage').style.display = 'block';
+        setTimeout(() => {
+            document.getElementById('successMessage').style.display = 'none';
+        }, 2000);
+    });
+</script>
 </body>
 </html>
