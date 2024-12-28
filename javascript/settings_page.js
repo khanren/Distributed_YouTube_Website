@@ -9,15 +9,6 @@ function previewProfilePicture(event) {
   }
 }
 
-// Mock saving functionality
-document.querySelector('form').addEventListener('submit', function(e) {
-  e.preventDefault();
-  document.getElementById('successMessage').style.display = 'block';
-  setTimeout(() => {
-      document.getElementById('successMessage').style.display = 'none';
-  }, 2000);
-});
-
 document.addEventListener('DOMContentLoaded', function() {
     const email = localStorage.getItem('email');
     if (email) {
@@ -30,4 +21,13 @@ document.addEventListener('DOMContentLoaded', function() {
   if (storedName) {
       document.getElementById('name').value = storedName;
   }
+});
+
+// Mock saving functionality
+document.querySelector('form').addEventListener('submit', function(e) {
+  e.preventDefault();
+  document.getElementById('successMessage').style.display = 'block';
+  setTimeout(() => {
+      document.getElementById('successMessage').style.display = 'none';
+  }, 2000);
 });
