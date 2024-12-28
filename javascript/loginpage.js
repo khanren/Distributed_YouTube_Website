@@ -46,17 +46,14 @@ async function signIn(event) {
 
                         if (userData && userData.Username && userData.Password) {
                             const username = userData.Username;
-                            const hashedUsername = await hashData(username);
                             const savedPassword = await hashData(userData.Password); // Hash password before storing
-                            const hashedEmail = await hashData(userCredential.user.email);
-                            const hashedUid = await hashData(userCredential.user.uid);
 
                             // Save data to localStorage
-                            localStorage.setItem("username", hashedUsername);
+                            localStorage.setItem("username", username);
                             localStorage.setItem("password", savedPassword); // Store hashed password
                             localStorage.setItem("isLoggedIn", "true");
-                            localStorage.setItem("email", hashedEmail);
-                            localStorage.setItem("uid", hashedUid);
+                            localStorage.setItem("email", userCredential.user.email);
+                            localStorage.setItem("uid", userCredential.user.uid);
 
                             // Redirect to index.html
                             window.location.href = "index.html";
@@ -86,15 +83,12 @@ if (loginForm) {
 }
 
 // Google Sign-In Handler
-async function handleCredentialResponse(response) {
+function handleCredentialResponse(response) {
     console.log("Google JWT ID token:", response.credential);
 
-    const hashedUsername = await hashData("GoogleUser");
-    const hashedAvatar = await hashData("https://via.placeholder.com/32");
-
     localStorage.setItem("isLoggedIn", "true");
-    localStorage.setItem("username", hashedUsername);
-    localStorage.setItem("avatar", hashedAvatar);
+    localStorage.setItem("username", "GoogleUser");
+    localStorage.setItem("avatar", "https://via.placeholder.com/32");
 
     // Redirect to index.html
     window.location.href = "index.html";
