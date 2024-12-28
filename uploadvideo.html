@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Upload Video</title>
+  <script type="module" src="javascript/upload_video.js"></script>
   <link rel="stylesheet" href="css/upload_video.css">
 </head>
 <body>
@@ -20,16 +21,27 @@
       <h1>Upload Video</h1>
       <div class="dropzone">
         <p>Drag and drop video files to upload</p>
+        <!-- Video preview container -->
+      <div class="video-preview-container">
+        <video id="video-preview" controls style="display: none; width: 100%; margin-top: 20px;"></video>
+      </div>
         <label for="video-input" class="select-files-button">Select Files</label>
         <input type="file" id="video-input" accept="video/*" multiple hidden>
       </div>
+    
+      <!-- Video preview container -->
+      <div class="video-preview-container">
+        <video id="video-preview" controls style="display: none; width: 100%; margin-top: 20px;"></video>
+      </div>
+    
       <div class="info">
         <p>Your videos will be private until you publish them.</p>
       </div>
+    
       <form id="upload-form" enctype="multipart/form-data">
         <input type="text" id="video-title" placeholder="Enter Video Title" required>
         <textarea id="video-description" placeholder="Enter Video Description"></textarea>
-
+    
         <div class="visibility-dropdown">
           <select id="visibility-select">
             <option value="public">Public</option>
@@ -37,17 +49,20 @@
             <option value="private">Private</option>
           </select>
         </div>
-
+    
         <div class="thumbnail-upload">
           <label for="thumbnail-input" class="thumbnail-label">Select Thumbnail</label>
           <input type="file" id="thumbnail-input" accept="image/*">
         </div>
-
+    
         <div class="tags-input">
           <input type="text" id="video-tags" placeholder="Add tags, separated by commas">
         </div>
-
+    
         <button type="submit">Upload</button>
+        <progress id="upload-progress" value="0" max="100"></progress>
+      </form>
+    </div>    
 
         <progress id="upload-progress" value="0" max="100"></progress>
       </form>
@@ -60,6 +75,5 @@
     </div>
   </div>
 
-  <script src="script.js"></script>
 </body>
 </html>
