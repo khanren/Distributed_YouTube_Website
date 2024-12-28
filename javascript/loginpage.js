@@ -1,3 +1,4 @@
+// Firebase Configuration
 var firebaseConfig = {
     apiKey: "AIzaSyCCoYF6WOiJF6aUDDf0bbAH5OjE64jr064",
     authDomain: "distributed-4f324.firebaseapp.com",
@@ -5,47 +6,104 @@ var firebaseConfig = {
     storageBucket: "distributed-4f324.firebasestorage.app",
     messagingSenderId: "1039372735541",
     appId: "1:1039372735541:web:0e7a763807cbf70891cd7c",
-    measurementId: "G-TFQK6LP2GK"
+    measurementId: "G-TFQK6LP2GK",
+    databaseURL: "https://distributed-4f324-default-rtdb.asia-southeast1.firebasedatabase.app/"
 };
 
+// Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
+const database = firebase.database();
 
-function signIn(event) {
+// Utility function to hash data using SHA-256
+async function hashData(data) {
+    const encoder = new TextEncoder();
+    const dataBuffer = encoder.encode(data);
+    const hashBuffer = await crypto.subtle.digest("SHA-256", dataBuffer);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    return hashArray.map(byte => byte.toString(16).padStart(2, '0')).join('');
+}
+
+// Sign In Function
+async function signIn(event) {
     event.preventDefault();
+
+    // Get email and password values
     var email = document.getElementById("email").value;
     var password = document.getElementById("password").value;
 
+    // Authenticate the user
     auth.signInWithEmailAndPassword(email, password)
-        .then((userCredential) => {
+        .then(async (userCredential) => {
             if (userCredential.user.emailVerified) {
-                localStorage.setItem("isLoggedIn", "true");
-                localStorage.setItem("email", userCredential.user.email);
-                localStorage.setItem("uid", userCredential.user.uid); 
-                window.location.href = "index.html";
+                // Sanitize email to use as key in the database
+                const sanitizedEmail = email.replace(/[.#$[\]]/g, ',');
+
+                // Retrieve user data (username and password) from the database
+                database.ref('User/' + sanitizedEmail).once('value')
+                    .then(async (snapshot) => {
+                        const userData = snapshot.val();
+
+                        if (userData && userData.Username && userData.Password) {
+                            const username = userData.Username;
+                            const hashedUsername = await hashData(username);
+                            const savedPassword = await hashData(userData.Password); // Hash password before storing
+                            const hashedEmail = await hashData(userCredential.user.email);
+                            const hashedUid = await hashData(userCredential.user.uid);
+
+                            // Save data to localStorage
+                            localStorage.setItem("username", hashedUsername);
+                            localStorage.setItem("password", savedPassword); // Store hashed password
+                            localStorage.setItem("isLoggedIn", "true");
+                            localStorage.setItem("email", hashedEmail);
+                            localStorage.setItem("uid", hashedUid);
+
+                            // Redirect to index.html
+                            window.location.href = "index.html";
+                        } else {
+                            throw new Error("User data is missing or incomplete.");
+                        }
+                    })
+                    .catch((error) => {
+                        console.error("Error retrieving user data:", error);
+                        alert("Error retrieving user data: " + error.message);
+                    });
             } else {
                 alert("Please verify your email before logging in.");
                 auth.signOut();
             }
         })
         .catch((error) => {
+            console.error("Error during sign-in:", error);
             alert("Error: " + error.message);
         });
 }
 
-document.getElementById("login-form").addEventListener("submit", signIn);
+// Add event listener to login form
+const loginForm = document.getElementById("login-form");
+if (loginForm) {
+    loginForm.addEventListener("submit", signIn);
+}
 
-function handleCredentialResponse(response) {
-    console.log("Google JWT ID token: " + response.credential);
+// Google Sign-In Handler
+async function handleCredentialResponse(response) {
+    console.log("Google JWT ID token:", response.credential);
+
+    const hashedUsername = await hashData("GoogleUser");
+    const hashedAvatar = await hashData("https://via.placeholder.com/32");
 
     localStorage.setItem("isLoggedIn", "true");
-    localStorage.setItem("username", "GoogleUser");
-    localStorage.setItem("avatar", "https://via.placeholder.com/32");
+    localStorage.setItem("username", hashedUsername);
+    localStorage.setItem("avatar", hashedAvatar);
+
+    // Redirect to index.html
     window.location.href = "index.html";
 }
 
+// Reset Password Function
 function resetPassword(event) {
     event.preventDefault();
+
     const email = document.getElementById("reset-email").value;
 
     auth.sendPasswordResetEmail(email)
@@ -54,18 +112,21 @@ function resetPassword(event) {
             window.location.href = "login.html";
         })
         .catch((error) => {
+            console.error("Error during password reset:", error);
             alert("Error: " + error.message);
         });
 }
 
+// Add event listener to reset password form
 const resetPasswordForm = document.getElementById("reset-password-form");
 if (resetPasswordForm) {
     resetPasswordForm.addEventListener("submit", resetPassword);
 }
 
+// Monitor Authentication State
 firebase.auth().onAuthStateChanged((user) => {
     if (user) {
-        console.log("Active user: " + user.email);
+        console.log("Active user:", user.email);
     } else {
         console.log("No active user found.");
     }

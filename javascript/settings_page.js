@@ -1,16 +1,33 @@
-const signInBtn = document.getElementById("nameBtn");
-const signUpBtn = document.getElementById("pfpBtn");
-const fistForm = document.getElementById("pfp");
-const secondForm = document.getElementById("name");
-const container = document.querySelector(".container");
+function previewProfilePicture(event) {
+  const file = event.target.files[0];
+  if (file) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+          document.getElementById('profilePreview').src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+  }
+}
 
-signInBtn.addEventListener("click", () => {
-  container.classList.remove("right-panel-active");
+// Mock saving functionality
+document.querySelector('form').addEventListener('submit', function(e) {
+  e.preventDefault();
+  document.getElementById('successMessage').style.display = 'block';
+  setTimeout(() => {
+      document.getElementById('successMessage').style.display = 'none';
+  }, 2000);
 });
 
-signUpBtn.addEventListener("click", () => {
-  container.classList.add("right-panel-active");
+document.addEventListener('DOMContentLoaded', function() {
+    const email = localStorage.getItem('email');
+    if (email) {
+        document.getElementById('email').value = email;
+    }
 });
 
-fistForm.addEventListener("submit", (e) => e.preventDefault());
-secondForm.addEventListener("submit", (e) => e.preventDefault());
+document.addEventListener('DOMContentLoaded', function() {
+  var storedName = localStorage.getItem('username');
+  if (storedName) {
+      document.getElementById('name').value = storedName;
+  }
+});

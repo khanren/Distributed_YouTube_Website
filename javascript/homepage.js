@@ -118,11 +118,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <li><a class="dropdown-item logout" href="#">Logout</a></li>
         `;
         document.querySelector('.logout').addEventListener('click', () => {
-            localStorage.removeItem('isLoggedIn');
-            localStorage.removeItem('email');
-            localStorage.removeItem('username');
-            localStorage.removeItem('avatar');
-            localStorage.removeItem('uid'); // Remove the uid from local storage
+            localStorage.clear(); // Clear all local storage completely
             window.location.href = 'index.html';
         });
         document.querySelector('.dropdown-item[href="settings.html"]').addEventListener('click', (e) => {
@@ -144,12 +140,19 @@ function logoutUser() {
     if (localStorage.getItem("isLoggedIn") === "true") {
         console.log('Logging out user...');
 
+        // Clear all local storage completely
         localStorage.clear();
+        localStorage.removeItem('password');
 
-        document.cookie.split(";").forEach(function(c) { 
-            document.cookie = c.trim().split("=")[0] + "=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/"; 
+        // Clear session storage as well, if used
+        sessionStorage.clear();
+
+        // Clear cookies
+        document.cookie.split(";").forEach(function(c) {
+            document.cookie = c.trim().split("=")[0] + "=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/";
         });
 
+        // Clear caches
         if ('caches' in window) {
             caches.keys().then(function(cacheNames) {
                 return Promise.all(
@@ -160,10 +163,13 @@ function logoutUser() {
             });
         }
 
-        console.log('User logged out successfully.');
+        console.log('All local and session storage cleared. User logged out successfully.');
         window.location.href = "login.html";
     } else {
         console.log('No user is currently logged in.');
         alert('No user is currently logged in.');
     }
 }
+
+// Attach the updated logout function to the logout button
+document.querySelector('.logout').addEventListener('click', logoutUser);
