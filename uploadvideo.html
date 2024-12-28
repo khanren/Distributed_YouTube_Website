@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Upload Video</title>
+  <link rel="stylesheet" href="css/upload_video.css">
+</head>
+<body>
+  <div class="container">
+    <nav class="navbar navbar-dark bg-secondary px-4 py-2 d-flex align-items-center">
+      <div class="d-flex align-items-center">
+        <a href="index.html">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/b/b8/YouTube_Logo_2017.svg" alt="YouTube Logo" height="30">
+        </a>
+      </div>
+    </nav>
+
+    <div class="upload-container">
+      <h1>Upload Video</h1>
+      <div class="dropzone">
+        <p>Drag and drop video files to upload</p>
+        <label for="video-input" class="select-files-button">Select Files</label>
+        <input type="file" id="video-input" accept="video/*" multiple hidden>
+      </div>
+      <div class="info">
+        <p>Your videos will be private until you publish them.</p>
+      </div>
+      <form id="upload-form" enctype="multipart/form-data">
+        <input type="text" id="video-title" placeholder="Enter Video Title" required>
+        <textarea id="video-description" placeholder="Enter Video Description"></textarea>
+
+        <div class="visibility-dropdown">
+          <select id="visibility-select">
+            <option value="public">Public</option>
+            <option value="unlisted">Unlisted</option>
+            <option value="private">Private</option>
+          </select>
+        </div>
+
+        <div class="thumbnail-upload">
+          <label for="thumbnail-input" class="thumbnail-label">Select Thumbnail</label>
+          <input type="file" id="thumbnail-input" accept="image/*">
+        </div>
+
+        <div class="tags-input">
+          <input type="text" id="video-tags" placeholder="Add tags, separated by commas">
+        </div>
+
+        <button type="submit">Upload</button>
+
+        <progress id="upload-progress" value="0" max="100"></progress>
+      </form>
+      <p class="terms">
+        By submitting your videos to YouTube, you acknowledge that you agree to YouTube's Terms of Service and Community Guidelines.
+      </p>
+      <p class="privacy">
+        Please make sure that you do not violate others' copyright or privacy rights. Learn more.
+      </p>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
