@@ -20,9 +20,9 @@ const app = initializeApp(firebaseConfig);
 const storage = getStorage(app);
 const database = getDatabase(app);
 
-// Function to sanitize email for Firebase path (minimal sanitization to align with `User` format)
+// Function to sanitize email for Firebase path
 function sanitizeEmail(email) {
-  return email.replace(/[.#$[\]]/g, ","); // Retain `@` and `.` for consistency with `User` node
+  return email.replace(/[.#$[\]]/g, ",");
 }
 
 // Function to sanitize file name for Firebase path
@@ -30,26 +30,109 @@ function sanitizeFileName(fileName) {
   return fileName.replace(/[.#$[\]]/g, "_");
 }
 
-// Function to preview the video
-function previewVideo(file) {
-  const videoPreview = document.getElementById("video-preview");
-  if (file) {
-    const fileURL = URL.createObjectURL(file);
-    videoPreview.src = fileURL;
-    videoPreview.style.display = "block"; // Show the video preview
-  } else {
-    videoPreview.src = "";
-    videoPreview.style.display = "none"; // Hide the preview if no file is selected
+// Function to show progress overlay
+function showProgressOverlay(message = "Processing your video...") {
+  const overlay = document.createElement("div");
+  overlay.id = "progress-overlay";
+  overlay.style.position = "fixed";
+  overlay.style.top = "0";
+  overlay.style.left = "0";
+  overlay.style.width = "100%";
+  overlay.style.height = "100%";
+  overlay.style.backgroundColor = "rgba(0, 0, 0, 0.5)";
+  overlay.style.display = "flex";
+  overlay.style.justifyContent = "center";
+  overlay.style.alignItems = "center";
+  overlay.style.zIndex = "1000";
+
+  const spinner = document.createElement("div");
+  spinner.id = "spinner";
+  spinner.style.width = "50px";
+  spinner.style.height = "50px";
+  spinner.style.border = "5px solid #ccc";
+  spinner.style.borderTop = "5px solid #ff0000";
+  spinner.style.borderRadius = "50%";
+  spinner.style.animation = "spin 1s linear infinite";
+
+  const messageElement = document.createElement("p");
+  messageElement.id = "progress-message";
+  messageElement.textContent = message;
+  messageElement.style.color = "#fff";
+  messageElement.style.marginTop = "15px";
+  messageElement.style.fontSize = "16px";
+
+  overlay.appendChild(spinner);
+  overlay.appendChild(messageElement);
+
+  document.body.appendChild(overlay);
+
+  // Add spinner animation
+  const style = document.createElement("style");
+  style.textContent = `
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  `;
+  document.head.appendChild(style);
+}
+
+// Function to update the progress overlay to a checkmark
+function showCompletionOverlay() {
+  const spinner = document.getElementById("spinner");
+  const messageElement = document.getElementById("progress-message");
+
+  if (spinner) {
+    spinner.style.width = "0";
+    spinner.style.height = "0";
+    spinner.style.border = "none";
+
+    const checkmark = document.createElement("div");
+    checkmark.innerHTML = "&#10003;"; // Checkmark character
+    checkmark.style.fontSize = "50px";
+    checkmark.style.color = "#4CAF50";
+
+    spinner.parentNode.replaceChild(checkmark, spinner);
+  }
+
+  if (messageElement) {
+    messageElement.textContent = "Video uploaded successfully!";
+    messageElement.style.color = "#4CAF50";
+  }
+
+  setTimeout(() => {
+    hideProgressOverlay();
+    window.location.href = "index.html"; // Redirect to index.html after 2 seconds
+  }, 2000); // Hide overlay after 2 seconds
+}
+
+// Function to hide progress overlay
+function hideProgressOverlay() {
+  const overlay = document.getElementById("progress-overlay");
+  if (overlay) {
+    document.body.removeChild(overlay);
   }
 }
 
+// Function to preview the selected video
+function previewVideo(file) {
+  const videoPreview = document.getElementById("video-preview");
+  const videoURL = URL.createObjectURL(file);
+  videoPreview.src = videoURL;
+  videoPreview.load();
+  videoPreview.style.display = "block";
+}
+
 // Function to upload a video and save metadata
-async function uploadVideo(file, email, title, description, tag) {
+async function uploadVideo(file, email, title, description, tagsInput) {
   try {
     if (!file) {
       alert("Please select a file to upload.");
       return;
     }
+
+    // Show progress overlay
+    showProgressOverlay("Uploading your video...");
 
     // Sanitize the user's email and file name
     const sanitizedEmail = sanitizeEmail(email);
@@ -57,7 +140,7 @@ async function uploadVideo(file, email, title, description, tag) {
 
     // Generate unique file name and storage path
     const videoId = `${Date.now()}_${sanitizedFileName}`;
-    const videoPath = `videos/${videoId}`; // Matches the existing Firebase rules
+    const videoPath = `videos/${videoId}`;
 
     // Create a storage reference
     const storageRefInstance = storageRef(storage, videoPath);
@@ -73,6 +156,9 @@ async function uploadVideo(file, email, title, description, tag) {
     // Get the upload time
     const uploadTime = new Date().toISOString();
 
+    // Process tags input
+    const tags = tagsInput ? tagsInput.split(",").map(tag => tag.trim()) : [];
+
     // Save metadata to Firebase Realtime Database
     const videoMetadataPath = `Uploaded Video/${sanitizedEmail}/${videoId}`;
     const metadata = {
@@ -82,19 +168,21 @@ async function uploadVideo(file, email, title, description, tag) {
       url: videoUrl,
     };
 
-    // Add tag only if it exists
-    if (tag) {
-      metadata.tag = tag;
+    // Add tags to metadata if they exist
+    if (tags.length > 0) {
+      metadata.tags = tags;
     }
 
-    // Set metadata in the Realtime Database
     await set(dbRef(database, videoMetadataPath), metadata);
     console.log("Metadata saved successfully:", metadata);
 
-    alert("Video uploaded and metadata saved successfully!");
+    // Update progress overlay to show completion
+    showCompletionOverlay();
+
   } catch (error) {
     console.error("Error uploading video or saving metadata:", error);
-    alert("Failed to upload video or save metadata. Check console for details.");
+    alert("Failed to upload video or save metadata. Please try again.");
+    hideProgressOverlay();
   }
 }
 
@@ -110,7 +198,6 @@ document.getElementById("video-input").addEventListener("change", (event) => {
 document.getElementById("upload-form").addEventListener("submit", async (event) => {
   event.preventDefault();
 
-  // Retrieve user email from local storage
   const email = localStorage.getItem("email");
 
   if (!email) {
@@ -118,20 +205,15 @@ document.getElementById("upload-form").addEventListener("submit", async (event) 
     return;
   }
 
-  // Retrieve metadata from form safely
-  const titleElement = document.getElementById("video-title");
-  const descriptionElement = document.getElementById("video-description");
-  const tagElement = document.getElementById("video-tag");
+  const title = document.getElementById("video-title").value;
+  const description = document.getElementById("video-description").value;
+  const tagsInput = document.getElementById("video-tags").value;
 
-  const title = titleElement ? titleElement.value : null;
-  const description = descriptionElement ? descriptionElement.value : null;
-  const tag = tagElement ? tagElement.value : null;
-
-  // Proceed with video upload
   const fileInput = document.getElementById("video-input");
   const file = fileInput.files[0];
+
   if (file) {
-    await uploadVideo(file, email, title, description, tag); // Upload video to Firebase
+    await uploadVideo(file, email, title, description, tagsInput);
   } else {
     alert("Please select a video file before uploading.");
   }

@@ -164,3 +164,65 @@ ul#recommended-list {
 #add-comment button:hover {
     background-color: #005bb5;
 }
+
+/* Custom Modal Styles */
+.custom-modal {
+    display: none; /* Hidden by default */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+}
+
+.custom-modal-content {
+    background-color: #111;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    color: white;
+    width: 300px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.custom-modal-content h5 {
+    margin-bottom: 10px;
+    font-size: 18px;
+    color: #ff4d4d;
+}
+
+.custom-modal-content p {
+    font-size: 14px;
+    color: #ccc;
+    margin-bottom: 20px;
+}
+
+.modal-actions button {
+    margin: 0 10px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.modal-actions .btn-danger {
+    background-color: #ff4d4d;
+    color: white;
+}
+
+.modal-actions .btn-secondary {
+    background-color: #444;
+    color: white;
+}
+
+.modal-actions .btn-danger:hover {
+    background-color: #e60000;
+}
+
+.modal-actions .btn-secondary:hover {
+    background-color: #666;
+}

@@ -63,9 +63,16 @@ function fetchComments() {
 function deleteComment(commentId) {
     if (!commentId) return;
 
-    const userConfirmed = confirm('Are you sure you want to delete this comment? This action cannot be undone.');
+    const modal = document.getElementById('custom-modal');
+    const confirmButton = document.getElementById('confirm-delete');
+    const cancelButton = document.getElementById('cancel-delete');
 
-    if (userConfirmed) {
+    // Show the modal
+    modal.style.display = 'flex';
+
+    // Confirm deletion
+    confirmButton.onclick = () => {
+        modal.style.display = 'none';
         database.ref(`Comments/${videoId}/${commentId}`).remove()
             .then(() => {
                 fetchComments();
@@ -74,8 +81,21 @@ function deleteComment(commentId) {
                 console.error('Error deleting comment:', error);
                 alert('Error deleting comment: ' + error.message);
             });
-    }
+    };
+
+    // Cancel deletion
+    cancelButton.onclick = () => {
+        modal.style.display = 'none';
+    };
 }
+
+// Close the modal when clicking outside it
+window.onclick = (event) => {
+    const modal = document.getElementById('custom-modal');
+    if (event.target === modal) {
+        modal.style.display = 'none';
+    }
+};
 
 function updateLikeDislikeCountsDisplay() {
     const videoLikesRef = database.ref(`LikeOrDislikeCount/${videoId}`);

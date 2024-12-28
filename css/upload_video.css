@@ -212,3 +212,52 @@ button:hover {
 #upload-progress::-webkit-progress-value {
   background: #ff0000;
 }
+
+/* Custom Alert Styles */
+.custom-alert {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 1000;
+  justify-content: center;
+  align-items: center;
+}
+
+.custom-alert-content {
+  background-color: #111;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  color: white;
+  width: 300px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.custom-alert-content h5 {
+  margin-bottom: 10px;
+  font-size: 18px;
+  color: #ff4d4d;
+}
+
+.custom-alert-content p {
+  font-size: 14px;
+  color: #ccc;
+  margin-bottom: 20px;
+}
+
+.custom-alert-content .btn-danger {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  background-color: #ff4d4d;
+  color: white;
+  cursor: pointer;
+}
+
+.custom-alert-content .btn-danger:hover {
+  background-color: #e60000;
+}
