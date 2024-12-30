@@ -24,6 +24,26 @@ async function hashData(data) {
     return hashArray.map(byte => byte.toString(16).padStart(2, '0')).join('');
 }
 
+// Email validation function
+function validateEmail(email) {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(String(email).toLowerCase());
+}
+
+// Add event listener to email input for validation
+const emailInput = document.getElementById("email");
+if (emailInput) {
+    emailInput.addEventListener("input", function() {
+        if (validateEmail(emailInput.value)) {
+            emailInput.classList.add("valid");
+            emailInput.classList.remove("invalid");
+        } else {
+            emailInput.classList.add("invalid");
+            emailInput.classList.remove("valid");
+        }
+    });
+}
+
 // Sign In Function
 async function signIn(event) {
     event.preventDefault();

@@ -17,7 +17,7 @@ body {
     width: 100%;
     max-width: 400px;
     color: white;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.6);
+    box-shadow: 0 8px 16px rgba(255, 0, 0, 0.6); /* Change to red shadow */
 }
 
 .login-logo {
@@ -104,6 +104,11 @@ input[type="email"] {
 
 input[type="email"]:focus {
     outline: 1px solid #ff4d4d;
+}
+
+input[type="email"].valid {
+    box-shadow: 0 0 5px #00ff00; /* Green shadow */
+    border: 1px solid #00ff00;
 }
 
 .btn-primary {
