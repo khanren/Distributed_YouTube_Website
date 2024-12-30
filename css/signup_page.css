@@ -58,6 +58,26 @@ input[type="password"].invalid {
     border: 1px solid #ff0000;
 }
 
+input[type="password"].valid {
+    box-shadow: 0 0 5px #00ff00; /* Green shadow */
+    border: 1px solid #00ff00;
+}
+
+input[type="password"].invalid {
+    box-shadow: 0 0 5px #ff0000; /* Red shadow */
+    border: 1px solid #ff0000;
+}
+
+input[type="text"].valid {
+    box-shadow: 0 0 5px #00ff00; /* Green shadow */
+    border: 1px solid #00ff00;
+}
+
+input[type="text"].invalid {
+    box-shadow: 0 0 5px #ff0000; /* Red shadow */
+    border: 1px solid #ff0000;
+}
+
 .btn-primary {
     background-color: #ff4d4d;
     color: white;

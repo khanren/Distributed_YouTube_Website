@@ -23,12 +23,6 @@ function isValidEmail(email) {
     return emailRegex.test(email);
 }
 
-// Password strength validation function
-function isStrongPassword(password) {
-    const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-    return strongPasswordRegex.test(password);
-}
-
 // Add event listener to email input for validation
 const emailInput = document.getElementById("email");
 if (emailInput) {
@@ -43,6 +37,28 @@ if (emailInput) {
             emailInput.style.boxShadow = ""; // Remove shadow
         }
     });
+}
+
+// Add event listener to username input for validation
+const usernameInput = document.getElementById("username");
+if (usernameInput) {
+    usernameInput.addEventListener("input", function() {
+        if (usernameInput.value.trim() !== "") {
+            usernameInput.classList.add("valid");
+            usernameInput.classList.remove("invalid");
+            usernameInput.style.boxShadow = "0 0 5px #00ff00"; // Green shadow
+        } else {
+            usernameInput.classList.add("invalid");
+            usernameInput.classList.remove("valid");
+            usernameInput.style.boxShadow = "0 0 5px #ff0000"; // Red shadow
+        }
+    });
+}
+
+// Password strength validation function
+function isStrongPassword(password) {
+    const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    return strongPasswordRegex.test(password);
 }
 
 // Add event listener to password input for validation
