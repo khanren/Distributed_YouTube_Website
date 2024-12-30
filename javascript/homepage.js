@@ -22,7 +22,9 @@ function redirectToVideoPage(videoId) {
 
 async function fetchVideos(searchQuery = '', append = false) {
     try {
-        loadingIndicator.classList.remove('hidden');
+        if (loadingIndicator) {
+            loadingIndicator.classList.remove('hidden');
+        }
         const url = searchQuery
             ? `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(searchQuery)}&type=video&maxResults=50&key=${API_KEY}${nextPageToken ? `&pageToken=${nextPageToken}` : ''}`
             : `https://www.googleapis.com/youtube/v3/videos?part=snippet&chart=mostPopular&maxResults=50&key=${API_KEY}${nextPageToken ? `&pageToken=${nextPageToken}` : ''}`;
@@ -30,10 +32,12 @@ async function fetchVideos(searchQuery = '', append = false) {
         const response = await fetch(url);
         const data = await response.json();
         nextPageToken = data.nextPageToken || null;
-        loadingIndicator.classList.add('hidden');
+        if (loadingIndicator) {
+            loadingIndicator.classList.add('hidden');
+        }
 
         const items = shuffleArray(searchQuery ? data.items.filter(item => item.id.videoId) : data.items);
-        if (!append) videoGrid.innerHTML = '';
+        if (!append && videoGrid) videoGrid.innerHTML = '';
         
         items.forEach(({ id, snippet }) => {
             const videoId = searchQuery ? id.videoId : id;
@@ -47,7 +51,7 @@ async function fetchVideos(searchQuery = '', append = false) {
                 <h2>${snippet.title}</h2>
                 <p>${snippet.channelTitle}</p>
             `;
-            videoGrid.appendChild(videoCard);
+            if (videoGrid) videoGrid.appendChild(videoCard);
         });
     } catch (error) {
         console.error('Error fetching videos:', error);
