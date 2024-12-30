@@ -4,29 +4,92 @@
     --gray: #333;
     --blue: #0367a6;
     --lightblue: #008997;
-  
+    --red: #ff0000; 
+
     /* RADII */
     --button-radius: 0.7rem;
-  
+
     /* SIZES */
     --max-width: 758px;
     --max-height: 420px;
-  
+
     font-size: 16px;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
-      Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
-  }
-  
-  body {
-    background-color: #000000;
+        Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+}
+
+body {
+    background-color: #000 !important;
     color: #e2e8f0;
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
     align-items: center;
     height: 100vh;
+}
+
+.navbar {
+    background-color: #000 !important;
+    border-bottom: 1px solid #444;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+    padding: 10px 20px;
+}
+
+.navbar .form-control {
+    background-color: #333;
+    border: none;
+    color: #fff;
+    height: 38px;
+    border-radius: 20px;
+    padding: 0 15px;
+}
+
+.navbar .form-control::placeholder {
+    color: #ccc;
+}
+
+.navbar button[type="submit"] {
+  background-color: transparent;
+  border: 1px solid #fff;
+  border-radius: 20px;
+  color: #fff;
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: bold;
+  padding: 0.5rem 1rem;
+  text-transform: uppercase;
+  transition: transform 80ms ease-in;
+}
+
+.navbar button[type="submit"]:hover {
+    background-color: #444;
+}
+
+.navbar button[type="submit"]:active {
+    transform: scale(0.95);
+}
+
+#sidebar {
+    background-color: #000 !important;
+    overflow-y: auto;
+    color: #fff !important;
+    width: 250px;
+    height: 100vh;
+    position: fixed;
+    z-index: 1000;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    top: 56px;
+}
+
+.hidden {
+    transform: translateX(-100%);
+    opacity: 0;
+    width: 0;
 }
 
 section {
@@ -36,6 +99,7 @@ section {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     width: 100%;
     max-width: 550px;
+    margin-top: 80px;
 }
 
 header h2 {
@@ -73,30 +137,33 @@ input[type="file"] {
 }
 
 button[type="submit"] {
-    background-color: var(--blue);
-    background-image: linear-gradient(90deg, var(--blue) 0%, var(--lightblue) 74%);
+    background-color: var(--red); 
     border-radius: 20px;
-    border: 1px solid var(--blue);
+    border: 1px solid var(--red); 
     color: var(--white);
     cursor: pointer;
     font-size: 0.8rem;
     font-weight: bold;
     letter-spacing: 0.1rem;
-    padding: 0.9rem 4rem;
+    padding: 0.6rem 1.5rem;
     text-transform: uppercase;
     transition: transform 80ms ease-in;
+    border-radius: 30px;
 }
-button[type="submit"]:hover{
-  background-color: var(--blue);
-  background-image: linear-gradient(90deg, var(--blue) 0%, var(--lightblue) 50%);
+
+button[type="submit"]:hover {
+  background-color: #e60000;
 }
-button[type="submit"]:active{
-  transform: scale(0.95);
+
+button[type="submit"]:active {
+    transform: scale(0.95);
 }
 
 .profile-pic {
     display: flex;
+    flex-direction: column;
     align-items: center;
+    justify-content: center;
     margin-bottom: 16px;
 }
 
@@ -123,21 +190,25 @@ button[type="submit"]:active{
 }
 
 .custom-file-btn {
-  padding: 8px 17px;
-  font-size: 14px;
-  color: #ffffff;
-  background-color: var(--blue);
-  background-image: linear-gradient(90deg, var(--blue) 0%, var(--lightblue) 74%);
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
+    padding: 8px 17px;
+    font-size: 14px;
+    color: #ffffff;
+    background-color: var(--red); 
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
 }
 
 .custom-file-btn:hover {
-  background-color: var(--blue);
-  background-image: linear-gradient(90deg, var(--blue) 0%, var(--lightblue) 50%);
+    background-color: #ff3333; 
 }
 
 .change-pic{
+  margin-top: 10px;
   margin-left: 10px;
+}
+
+input:focus {
+  border-color: #e60000;
+  outline: none;
 }
