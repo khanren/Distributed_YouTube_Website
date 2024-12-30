@@ -23,6 +23,60 @@ function isValidEmail(email) {
     return emailRegex.test(email);
 }
 
+// Password strength validation function
+function isStrongPassword(password) {
+    const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    return strongPasswordRegex.test(password);
+}
+
+// Add event listener to email input for validation
+const emailInput = document.getElementById("email");
+if (emailInput) {
+    emailInput.addEventListener("input", function() {
+        if (isValidEmail(emailInput.value)) {
+            emailInput.classList.add("valid");
+            emailInput.classList.remove("invalid");
+            emailInput.style.boxShadow = "0 0 5px #00ff00"; // Green shadow
+        } else {
+            emailInput.classList.add("invalid");
+            emailInput.classList.remove("valid");
+            emailInput.style.boxShadow = ""; // Remove shadow
+        }
+    });
+}
+
+// Add event listener to password input for validation
+const passwordInput = document.getElementById("password");
+if (passwordInput) {
+    passwordInput.addEventListener("input", function() {
+        if (isStrongPassword(passwordInput.value)) {
+            passwordInput.classList.add("valid");
+            passwordInput.classList.remove("invalid");
+            passwordInput.style.boxShadow = "0 0 5px #00ff00"; // Green shadow
+        } else {
+            passwordInput.classList.add("invalid");
+            passwordInput.classList.remove("valid");
+            passwordInput.style.boxShadow = "0 0 5px #ff0000"; // Red shadow
+        }
+    });
+}
+
+// Add event listener to confirm password input for validation
+const confirmPasswordInput = document.getElementById("confirmPassword");
+if (confirmPasswordInput) {
+    confirmPasswordInput.addEventListener("input", function() {
+        if (confirmPasswordInput.value === passwordInput.value) {
+            confirmPasswordInput.classList.add("valid");
+            confirmPasswordInput.classList.remove("invalid");
+            confirmPasswordInput.style.boxShadow = "0 0 5px #00ff00"; // Green shadow
+        } else {
+            confirmPasswordInput.classList.add("invalid");
+            confirmPasswordInput.classList.remove("valid");
+            confirmPasswordInput.style.boxShadow = "0 0 5px #ff0000"; // Red shadow
+        }
+    });
+}
+
 // Sign-Up Function
 function signUp() {
     var username = document.getElementById("username").value;
@@ -32,6 +86,11 @@ function signUp() {
 
     if (!isValidEmail(email)) {
         alert("Please enter a valid email address.");
+        return;
+    }
+
+    if (!isStrongPassword(password)) {
+        alert("Please use a strong password. It should be at least 8 characters long and include uppercase, lowercase, numbers, and special characters.");
         return;
     }
 

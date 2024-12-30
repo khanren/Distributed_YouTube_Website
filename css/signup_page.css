@@ -9,7 +9,7 @@ body {
     font-family: 'Arial', sans-serif;
 }
 
-.login-card {
+.signup-card {
     background: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(10px);
     border-radius: 10px;
@@ -17,10 +17,10 @@ body {
     width: 100%;
     max-width: 400px;
     color: white;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.6);
+    box-shadow: 0 8px 16px rgba(255, 0, 0, 0.6); /* Change to red shadow */
 }
 
-.login-card h1 {
+.signup-card h1 {
     font-family: 'Arial', sans-serif;
     font-size: 1.75rem;
     text-align: center;
@@ -43,6 +43,21 @@ body {
     border: 1px solid #ff4d4d;
 }
 
+input[type="email"].valid {
+    box-shadow: 0 0 5px #00ff00; /* Green shadow */
+    border: 1px solid #00ff00;
+}
+
+input[type="password"].valid {
+    box-shadow: 0 0 5px #00ff00; /* Green shadow */
+    border: 1px solid #00ff00;
+}
+
+input[type="password"].invalid {
+    box-shadow: 0 0 5px #ff0000; /* Red shadow */
+    border: 1px solid #ff0000;
+}
+
 .btn-primary {
     background-color: #ff4d4d;
     color: white;
@@ -61,12 +76,12 @@ body {
     color: white;
 }
 
-.login-logo {
+.signup-logo {
     display: flex;
     justify-content: center;
     margin-bottom: 20px;
 }
-.login-logo img {
+.signup-logo img {
     width: 80px;
     height: auto;
 }

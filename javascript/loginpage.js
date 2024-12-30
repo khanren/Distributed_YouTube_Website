@@ -30,6 +30,12 @@ function validateEmail(email) {
     return re.test(String(email).toLowerCase());
 }
 
+// Password strength validation function
+function isStrongPassword(password) {
+    const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    return strongPasswordRegex.test(password);
+}
+
 // Add event listener to email input for validation
 const emailInput = document.getElementById("email");
 if (emailInput) {
@@ -37,9 +43,27 @@ if (emailInput) {
         if (validateEmail(emailInput.value)) {
             emailInput.classList.add("valid");
             emailInput.classList.remove("invalid");
+            emailInput.style.boxShadow = "0 0 5px #00ff00"; // Green shadow
         } else {
             emailInput.classList.add("invalid");
             emailInput.classList.remove("valid");
+            emailInput.style.boxShadow = ""; // Remove shadow
+        }
+    });
+}
+
+// Add event listener to password input for validation
+const passwordInput = document.getElementById("password");
+if (passwordInput) {
+    passwordInput.addEventListener("input", function() {
+        if (isStrongPassword(passwordInput.value)) {
+            passwordInput.classList.add("valid");
+            passwordInput.classList.remove("invalid");
+            passwordInput.style.boxShadow = "0 0 5px #00ff00"; // Green shadow
+        } else {
+            passwordInput.classList.add("invalid");
+            passwordInput.classList.remove("valid");
+            passwordInput.style.boxShadow = "0 0 5px #ff0000"; // Red shadow
         }
     });
 }
