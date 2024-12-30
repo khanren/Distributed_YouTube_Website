@@ -106,13 +106,20 @@
 
             <div>
                 <label for="current_password">Current Password</label>
-                <input id="current_password" name="current_password" type="password">
+                <div class="input-container">
+                    <input id="current_password" name="current_password" type="password" class="form-control">
+                    <i class="bi bi-eye-slash toggle-icon" id="toggleCurrentPasswordIcon" onclick="togglePasswordVisibility('current_password')"></i>
+                </div>
             </div>
-
+            
             <div>
                 <label for="new_password">New Password</label>
-                <input id="new_password" name="new_password" type="password">
+                <div class="input-container">
+                    <input id="new_password" name="new_password" type="password" class="form-control">
+                    <i class="bi bi-eye-slash toggle-icon" id="toggleNewPasswordIcon" onclick="togglePasswordVisibility('new_password')"></i>
+                </div>
             </div>
+            
             <br>
 
             <div class="save-container">

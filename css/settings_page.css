@@ -213,3 +213,33 @@ input:focus {
   border-color: #e60000;
   outline: none;
 }
+
+input[type="password"]:focus {
+    background-color: #1a202c; /* Same as the default background color */
+    border-color: #4a5568; /* Same as the default border color */
+    color: #e2e8f0; /* Text color */
+    outline: none; /* Removes the default outline */
+}
+
+.input-container {
+    position: relative;
+    width: 100%;
+}
+
+.input-container input {
+    width: 100%;
+    padding-right: 2.5rem; /* Space for the eye icon */
+}
+
+.toggle-icon {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    font-size: 1.2rem; /* Adjust icon size */
+    cursor: pointer;
+}
+
+.toggle-icon:hover {
+    color: #fff;
+}

@@ -49,22 +49,96 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 });
 
+// Function to encrypt password using SHA-256
+async function encryptPassword(password) {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(password);
+    const hash = await crypto.subtle.digest('SHA-256', data);
+    return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+// Function to decrypt password (assuming a simple base64 encoding for demonstration purposes)
+function decryptPassword(encryptedPassword) {
+    return atob(encryptedPassword);
+}
+
+function togglePasswordVisibility(inputId) {
+  const input = document.getElementById(inputId);
+  const icon = document.getElementById(`toggle${inputId.charAt(0).toUpperCase() + inputId.slice(1)}Icon`);
+  
+  // Toggle input type
+  if (input.type === 'password') {
+      input.type = 'text';
+      icon.classList.remove('bi-eye-slash');
+      icon.classList.add('bi-eye');
+  } else {
+      input.type = 'password';
+      icon.classList.remove('bi-eye');
+      icon.classList.add('bi-eye-slash');
+  }
+
+  // Add rotation animation
+  icon.style.transition = 'transform 0.3s ease';
+  icon.style.transform = 'rotate(360deg)';
+
+  // Reset the rotation after the animation
+  setTimeout(() => {
+      icon.style.transform = 'rotate(0deg)';
+  }, 300); // Duration matches the transition
+}
+
 document.addEventListener('DOMContentLoaded', function () {
-    document.querySelector('#settings-form').addEventListener('submit', function (e) {
+    document.querySelector('#settings-form').addEventListener('submit', async function (e) {
         e.preventDefault();
+
+        const user = firebase.auth().currentUser;
+
+        if (!user) {
+            console.error("User is not signed in.");
+            alert("You must be signed in to update your password.");
+            return;
+        }
 
         const newName = document.getElementById('name').value.trim();
         const newEmail = document.getElementById('email').value.trim();
         const currentName = localStorage.getItem('username');
         const currentEmail = localStorage.getItem('email');
+        const currentPassword = document.getElementById('current_password').value;
+        const newPassword = document.getElementById('new_password').value;
 
         console.log('New Name:', newName);
         console.log('Current Name in localStorage:', currentName);
         console.log('New Email:', newEmail);
         console.log('Current Email in localStorage:', currentEmail);
 
+        // Check if the user is trying to change the password
+        if (currentPassword && newPassword) {
+            try {
+                // Directly update password in Firebase Authentication
+                await user.updatePassword(newPassword);
+                console.log('Password successfully updated in Firebase Auth.');
+
+                // Update the password in Firebase Realtime Database
+                const sanitizedEmail = user.email.replace(/[.#$[\]]/g, ',');
+                firebase.database().ref('User/' + sanitizedEmail).update({
+                    Password: newPassword // Store without encryption
+                });
+                console.log('Password successfully updated in Firebase Realtime Database.');
+
+                // Clear password fields
+                document.getElementById('current_password').value = '';
+                document.getElementById('new_password').value = '';
+
+                alert('Password updated successfully!');
+            } catch (error) {
+                console.error('Error updating password:', error);
+                alert('Error: ' + error.message);
+            }
+        } else {
+            alert('Please enter both current and new passwords.');
+        }
+
         // Firebase Authentication and Realtime Database Update
-        const user = firebase.auth().currentUser;
         if (user) {
             const updates = {};
 
