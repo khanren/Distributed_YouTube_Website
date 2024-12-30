@@ -28,3 +28,18 @@ document.getElementById("reset-password-form").addEventListener("submit", async 
         alert("Failed to send reset email. Please try again.");
     }
 });
+
+document.getElementById("reset-email").addEventListener("input", function() {
+    const emailInput = document.getElementById("reset-email");
+    const email = emailInput.value;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (emailRegex.test(email)) {
+        emailInput.classList.add("valid");
+        emailInput.classList.remove("invalid");
+        emailInput.style.boxShadow = "0 0 5px #00ff00"; // Green shadow
+    } else {
+        emailInput.classList.add("invalid");
+        emailInput.classList.remove("valid");
+        emailInput.style.boxShadow = "0 0 5px #ff0000"; // Red shadow
+    }
+});
