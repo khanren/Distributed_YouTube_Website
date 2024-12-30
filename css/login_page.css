@@ -102,10 +102,6 @@ input[type="email"] {
     box-sizing: border-box;
 }
 
-input[type="email"]:focus {
-    outline: 1px solid #ff4d4d;
-}
-
 input[type="email"].valid {
     box-shadow: 0 0 5px #00ff00; /* Green shadow */
     border: 1px solid #00ff00;
