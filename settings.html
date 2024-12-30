@@ -7,9 +7,9 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>    
     <link href="css/settings_page.css" rel="stylesheet">
     <script src="javascript/homepage.js" defer></script>
     <script src="javascript/settings_page.js" defer></script>
@@ -84,42 +84,42 @@
         <p>Update your account's profile information, email address, and profile picture.</p><br>
     </header>
 
-    <form method="post" action="/update-profile" enctype="multipart/form-data" class="mt-6 space-y-6">
-        <div class="profile-pic">
-            <img src="default-avatar.jpg" alt="Profile Picture" id="profilePreview">
-            <div class="change-pic">
-                <label for="profilePic">Change Profile Picture</label>
-                <input type="file" id="profilePic" style="display: none;" name="profilePic" accept="image/*" onchange="previewProfilePicture(event)">
-                <button type="button" class="custom-file-btn" onclick="document.getElementById('profilePic').click();">Choose picture</button>
+        <form id="settings-form">
+            <div class="profile-pic">
+                <img src="default-avatar.jpg" alt="Profile Picture" id="profilePreview">
+                <div class="change-pic">
+                    <label for="profilePic">Change Profile Picture</label>
+                    <input type="file" id="profilePic" style="display: none;" name="profilePic" accept="image/*" onchange="previewProfilePicture(event)">
+                    <button type="button" class="custom-file-btn" onclick="document.getElementById('profilePic').click();">Choose picture</button>
+                </div>
+            </div><br>
+
+            <div>
+                <label for="name">Name</label>
+                <input id="name" name="name" type="text" required>
             </div>
-        </div><br>
 
-        <div>
-            <label for="name">Name</label>
-            <input id="name" name="name" type="text" required>
-        </div>
+            <div>
+                <label for="email">Email</label>
+                <input id="email" name="email" type="email" required>
+            </div>
 
-        <div>
-            <label for="email">Email</label>
-            <input id="email" name="email" type="email" required>
-        </div>
+            <div>
+                <label for="current_password">Current Password</label>
+                <input id="current_password" name="current_password" type="password">
+            </div>
 
-        <div>
-            <label for="current_password">Current Password</label>
-            <input id="current_password" name="current_password" type="text" required>
-        </div>
+            <div>
+                <label for="new_password">New Password</label>
+                <input id="new_password" name="new_password" type="password">
+            </div>
+            <br>
 
-        <div>
-            <label for="new_password">New Password</label>
-            <input id="new_password" name="new_password" type="text" required>
-        </div>
-        <br>
-
-        <div class="save-container">
-            <button type="submit">Save</button>
-            <p id="successMessage" class="success-message" style="display: none;">Saved successfully.</p>
-        </div>
-    </form>
+            <div class="save-container">
+                <button type="submit">Save</button>
+                <p id="successMessage" class="success-message" style="display: none;">Saved successfully.</p>
+            </div>
+        </form>
 </section>
 </body>
 </html>

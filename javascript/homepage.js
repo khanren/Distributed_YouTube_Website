@@ -171,5 +171,3 @@ function logoutUser() {
     }
 }
 
-// Attach the updated logout function to the logout button
-document.querySelector('.logout').addEventListener('click', logoutUser);
