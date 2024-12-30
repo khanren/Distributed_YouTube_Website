@@ -71,6 +71,20 @@ body {
     transform: scale(0.95);
 }
 
+.dropdown-menu {
+    background-color: #000 !important;
+    border: none;
+    min-width: 200px;
+}
+
+.dropdown-item {
+    color: #fff !important;
+}
+
+.dropdown-item:hover {
+    background-color: #333;
+}
+
 #sidebar {
     background-color: #000 !important;
     overflow-y: auto;
@@ -100,7 +114,34 @@ section {
     max-width: 550px;
     margin-top: 80px;
     margin-bottom: 20px;
+    box-shadow: 0 8px 16px rgba(255, 0, 0, 0.6); /* Change to red shadow */
 }
+
+input[type="email"].valid {
+    box-shadow: 0 0 5px #00ff00; /* Green shadow */
+    border: 1px solid #00ff00;
+}
+
+input[type="email"].invalid {
+    box-shadow: 0 0 5px #ff0000; /* Red shadow */
+    border: 1px solid #ff0000;
+}
+
+input[type="password"].valid {
+    box-shadow: 0 0 5px #00ff00; /* Green shadow */
+    border: 1px solid #00ff00;
+}
+
+input[type="password"].invalid {
+    box-shadow: 0 0 5px #ff0000; /* Red shadow */
+    border: 1px solid #ff0000;
+}
+
+input[type="text"].valid {
+    box-shadow: 0 0 5px #00ff00; /* Green shadow */
+    border: 1px solid #00ff00;
+}
+
 
 header h2 {
     font-size: 1.5rem;

@@ -49,6 +49,92 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 });
 
+// Add event listener to email input for validation
+const emailInput = document.getElementById("email");
+if (emailInput) {
+    emailInput.addEventListener("input", function() {
+        if (isValidEmail(emailInput.value)) {
+            emailInput.classList.add("valid");
+            emailInput.classList.remove("invalid");
+            emailInput.style.boxShadow = "0 0 5px #00ff00"; // Green shadow
+        } else {
+            emailInput.classList.add("invalid");
+            emailInput.classList.remove("valid");
+            emailInput.style.boxShadow = ""; // Remove shadow
+        }
+    });
+}
+
+// Add event listener to name input for validation
+const nameInput = document.getElementById("name");
+if (nameInput) {
+    nameInput.addEventListener("input", function() {
+        if (nameInput.value.trim() !== "") {
+            nameInput.classList.add("valid");
+            nameInput.classList.remove("invalid");
+            nameInput.style.boxShadow = "0 0 5px #00ff00"; // Green shadow
+        } else {
+            nameInput.classList.add("invalid");
+            nameInput.classList.remove("valid");
+            nameInput.style.boxShadow = "0 0 5px #ff0000"; // Red shadow
+        }
+    });
+}
+
+// Password strength validation function
+function isStrongPassword(password) {
+    const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    return strongPasswordRegex.test(password);
+}
+
+// Add event listener to email input for validation
+const current_password = document.getElementById("email");
+if (current_password) {
+    current_password.addEventListener("input", function() {
+        if (isValidEmail(current_password.value)) {
+            current_password.classList.add("valid");
+            current_password.classList.remove("invalid");
+            current_password.style.boxShadow = "0 0 5px #00ff00"; // Green shadow
+        } else {
+            current_password.classList.add("invalid");
+            current_password.classList.remove("valid");
+            current_password.style.boxShadow = ""; // Remove shadow
+        }
+    });
+}
+
+// Add event listener to current password input for validation
+const currentPasswordInput = document.getElementById("current_password");
+if (currentPasswordInput) {
+    currentPasswordInput.addEventListener("input", function() {
+        if (isStrongPassword(currentPasswordInput.value)) {
+            currentPasswordInput.classList.add("valid");
+            currentPasswordInput.classList.remove("invalid");
+            currentPasswordInput.style.boxShadow = "0 0 5px #00ff00"; // Green shadow
+        } else {
+            currentPasswordInput.classList.add("invalid");
+            currentPasswordInput.classList.remove("valid");
+            currentPasswordInput.style.boxShadow = ""; // Remove shadow
+        }
+    });
+}
+
+// Add event listener to new password input for validation
+const newPasswordInput = document.getElementById("new_password");
+if (newPasswordInput) {
+    newPasswordInput.addEventListener("input", function() {
+        if (isStrongPassword(newPasswordInput.value)) {
+            newPasswordInput.classList.add("valid");
+            newPasswordInput.classList.remove("invalid");
+            newPasswordInput.style.boxShadow = "0 0 5px #00ff00"; // Green shadow
+        } else {
+            newPasswordInput.classList.add("invalid");
+            newPasswordInput.classList.remove("valid");
+            newPasswordInput.style.boxShadow = ""; // Remove shadow
+        }
+    });
+}
+
 // Function to encrypt password using SHA-256
 async function encryptPassword(password) {
     const encoder = new TextEncoder();
