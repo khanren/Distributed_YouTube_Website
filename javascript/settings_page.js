@@ -121,7 +121,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 // Update the password in Firebase Realtime Database
                 const sanitizedEmail = user.email.replace(/[.#$[\]]/g, ',');
                 firebase.database().ref('User/' + sanitizedEmail).update({
-                    Password: newPassword // Store without encryption
+                    Password: await encryptPassword(newPassword) // Store securely if necessary
                 });
                 console.log('Password successfully updated in Firebase Realtime Database.');
 
@@ -134,9 +134,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 console.error('Error updating password:', error);
                 alert('Error: ' + error.message);
             }
-        } else {
-            alert('Please enter both current and new passwords.');
-        }
+        } 
 
         // Firebase Authentication and Realtime Database Update
         if (user) {
