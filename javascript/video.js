@@ -137,6 +137,29 @@ function onYouTubeIframeAPIReady() {
     }
 }
 
+function logVideoView(title) {
+    const email = localStorage.getItem('email');
+    if (!email) {
+        console.warn('User is not logged in. Video view will not be logged.');
+        return;
+    }
+
+    const sanitizedEmail = sanitizeEmail(email);
+    const viewData = {
+        videoId: videoId,
+        title: title,
+        timestamp: Date.now(),
+    };
+
+    database.ref(`ViewedVideos/${sanitizedEmail}/${videoId}`).set(viewData)
+        .then(() => {
+            console.log('Video view logged successfully.');
+        })
+        .catch(error => {
+            console.error('Error logging video view:', error);
+        });
+}
+
 function onPlayerReady(event) {
     event.target.playVideo();
     const videoData = event.target.getVideoData();
@@ -145,6 +168,7 @@ function onPlayerReady(event) {
     videoTitle.innerText = title;
     updateLikeDislikeCountsDisplay();
     fetchComments();
+    logVideoView(title); // Log the video view with the title when the player is ready
 }
 
 function onPlayerError(event) {
