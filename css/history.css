@@ -1,11 +1,12 @@
-body {
-    margin: 0;
-    padding: 0;
+h1 {
     font-family: Arial, sans-serif;
-    background-color: #000 !important;
-    color: #fff !important;
-    overflow-x: hidden;
+    font-weight: bold;
 }
+
+#main-content {
+    background-color: #000 !important;
+}
+
 /* Updated Thumbnail Styling */
 #main-content img {
     border-radius: 8px;
@@ -21,6 +22,7 @@ body {
     flex-direction: column;
     justify-content: space-between;
     overflow: hidden;
+    
 }
 
 /* Video Title with ellipsis for overflow */
@@ -41,7 +43,7 @@ body {
     overflow: hidden;
     text-overflow: ellipsis;
     display: -webkit-box;
-    -webkit-line-clamp: 2; /* Limit to 2 lines */
+    -webkit-line-clamp: 3; /* Limit to 2 lines */
     -webkit-box-orient: vertical;
     margin-bottom: 0;
 }
@@ -52,11 +54,26 @@ body {
     background-color: transparent;
     border: none;
     color: #ffffff;
-    font-size: 1.25rem;
+    font-size: 1.75rem;
     padding: 0;
     cursor: pointer;
 }
 
 #main-content button:hover {
     color: #dc3545;
+}
+
+/* Video Card Styling */
+#main-content .bg-secondary {
+    background-color: #000 !important;
+    outline: #ffffff solid 1px;
+}
+
+#sidebar {
+    width: 250px;
+    transition: transform 0.3s ease;
+}
+
+#sidebar.hidden {
+    transform: translateX(-100%);
 }

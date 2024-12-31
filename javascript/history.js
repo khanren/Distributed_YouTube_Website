@@ -16,6 +16,10 @@ const database = firebase.database();
 
 document.addEventListener('DOMContentLoaded', () => {
     fetchWatchedVideos();
+    document.getElementById("menu-toggle").addEventListener("click", function () {
+        const sidebar = document.getElementById("sidebar");
+        sidebar.classList.toggle("hidden");
+    });
 });
 
 // Function to sanitize email for Firebase keys
@@ -59,8 +63,8 @@ function fetchWatchedVideos() {
     watchedVideosRef.once('value').then(async (snapshot) => {
         const watchedVideos = snapshot.val();
         if (watchedVideos) {
-            for (const videoId in watchedVideos) {
-                const videoData = watchedVideos[videoId];
+            const sortedVideos = Object.entries(watchedVideos).sort(([, a], [, b]) => b.timestamp - a.timestamp);
+            for (const [videoId, videoData] of sortedVideos) {
                 const videoDetails = await fetchVideoDetails(videoId); // Fetch additional details from YouTube API
 
                 if (videoDetails) {
