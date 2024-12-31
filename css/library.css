@@ -1,0 +1,146 @@
+:root{
+    background-color: #000 !important;
+}
+
+h1 {
+    font-family: Arial, sans-serif;
+    font-weight: bold;
+}
+
+#main-content {
+    background-color: #000 !important;
+}
+
+/* Updated Thumbnail Styling */
+#main-content img {
+    border-radius: 8px;
+    width: 150px;
+    height: 100px; /* Ensures a uniform thumbnail height */
+    object-fit: cover;
+    margin-right: 15px;
+}
+
+/* Updated Container for Video Details */
+#main-content .flex-grow-1 {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: hidden;
+    
+}
+
+/* Video Title with ellipsis for overflow */
+#main-content h5 {
+    font-size: 1rem;
+    color: #ffffff;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Video Description */
+#main-content p {
+    font-size: 0.875rem;
+    color: #ced4da;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 3; /* Limit to 2 lines */
+    line-clamp: 3; /* Standard property for compatibility */
+    -webkit-box-orient: vertical;
+    margin-bottom: 0;
+}
+
+/* Action Button (Close) */
+#main-content button {
+    align-self: flex-start;
+    background-color: transparent;
+    border: none;
+    color: #ffffff;
+    font-size: 1.75rem;
+    padding: 0;
+    cursor: pointer;
+}
+
+#main-content button:hover {
+    color: #dc3545;
+}
+
+/* Video Card Styling */
+#main-content .bg-secondary {
+    background-color: #000 !important;
+    outline: #ffffff solid 1px;
+}
+
+#sidebar {
+    width: 250px;
+    transition: transform 0.3s ease;
+}
+
+#sidebar.hidden {
+    transform: translateX(-100%);
+}
+
+/* Custom Alert Styles */
+.custom-alert {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+}
+
+.custom-alert-content {
+    background-color: #111;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    color: white;
+    width: 300px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.custom-alert-content h5 {
+    margin-bottom: 10px;
+    font-size: 18px;
+    color: #ff4d4d;
+}
+
+.custom-alert-content p {
+    font-size: 14px;
+    color: #ccc;
+    margin-bottom: 20px;
+}
+
+.modal-actions button {
+    margin: 0 10px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.modal-actions .btn-danger {
+    background-color: #ff4d4d;
+    color: white;
+}
+
+.modal-actions .btn-secondary {
+    background-color: #444;
+    color: white;
+}
+
+.modal-actions .btn-danger:hover {
+    background-color: #e60000;
+}
+
+.modal-actions .btn-secondary:hover {
+    background-color: #666;
+}

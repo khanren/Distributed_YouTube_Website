@@ -133,8 +133,33 @@ function previewVideo(file) {
   videoPreview.style.display = "block";
 }
 
+// Function to capture a frame from the video
+function captureThumbnail(videoFile) {
+  return new Promise((resolve, reject) => {
+    const video = document.createElement('video');
+    video.src = URL.createObjectURL(videoFile);
+    video.load();
+    video.addEventListener('loadeddata', () => {
+      video.currentTime = video.duration / 2; // Capture frame at the middle of the video
+    });
+    video.addEventListener('seeked', () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      const context = canvas.getContext('2d');
+      context.drawImage(video, 0, 0, canvas.width, canvas.height);
+      canvas.toBlob(blob => {
+        resolve(blob);
+      }, 'image/jpeg');
+    });
+    video.addEventListener('error', (error) => {
+      reject(error);
+    });
+  });
+}
+
 // Function to upload a video and save metadata
-async function uploadVideo(file, email, title, description, tagsInput) {
+async function uploadVideo(file, email, title, description, tagsInput, thumbnailFile) {
   try {
     if (!file) {
       alert("Please select a file to upload.");
@@ -169,6 +194,23 @@ async function uploadVideo(file, email, title, description, tagsInput) {
     // Process tags input
     const tags = tagsInput ? tagsInput.split(",").map(tag => tag.trim()) : [];
 
+    // Upload thumbnail if provided, otherwise capture from video
+    let thumbnailUrl = "";
+    if (thumbnailFile) {
+      const thumbnailPath = `thumbnails/${videoId}_${sanitizeFileName(thumbnailFile.name)}`;
+      const thumbnailRef = storageRef(storage, thumbnailPath);
+      const thumbnailSnapshot = await uploadBytes(thumbnailRef, thumbnailFile);
+      thumbnailUrl = await getDownloadURL(thumbnailRef);
+      console.log("Thumbnail URL:", thumbnailUrl);
+    } else {
+      const thumbnailBlob = await captureThumbnail(file);
+      const thumbnailPath = `thumbnails/${videoId}_auto.jpg`;
+      const thumbnailRef = storageRef(storage, thumbnailPath);
+      const thumbnailSnapshot = await uploadBytes(thumbnailRef, thumbnailBlob);
+      thumbnailUrl = await getDownloadURL(thumbnailRef);
+      console.log("Auto-generated Thumbnail URL:", thumbnailUrl);
+    }
+
     // Save metadata to Firebase Realtime Database
     const videoMetadataPath = `Uploaded Video/${sanitizedEmail}/${videoId}`;
     const metadata = {
@@ -177,6 +219,8 @@ async function uploadVideo(file, email, title, description, tagsInput) {
       description: description || "No description provided.",
       uploadTime,
       url: videoUrl,
+      thumbnail: thumbnailUrl, // Add thumbnail URL to metadata
+      originalFileName: file.name, // Add original file name to metadata
     };
 
     // Add tags to metadata if they exist
@@ -223,8 +267,11 @@ document.getElementById("upload-form").addEventListener("submit", async (event) 
   const fileInput = document.getElementById("video-input");
   const file = fileInput.files[0];
 
+  const thumbnailInput = document.getElementById("thumbnail-input");
+  const thumbnailFile = thumbnailInput.files[0];
+
   if (file) {
-    await uploadVideo(file, email, title, description, tagsInput);
+    await uploadVideo(file, email, title, description, tagsInput, thumbnailFile);
   } else {
     alert("Please select a video file before uploading.");
   }

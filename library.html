@@ -6,13 +6,10 @@
     <title>YouTube Prototype</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>   
     <link rel="stylesheet" href="css/homepage.css">
-    <link rel="stylesheet" href="css/history.css">
-    <script src="javascript/history.js" defer></script>
+    <link rel="stylesheet" href="css/library.css">
+    <script type="module" src="javascript/library.js" defer></script>
 </head>
 <body class="bg-dark text-white">
     <nav class="navbar navbar-dark bg-secondary px-4 py-2 d-flex align-items-center">
@@ -78,16 +75,26 @@
             </ul>
         </aside>
 
-        <!-- Watched Videos -->
+        <!-- Library Videos -->
         <main id="main-content" class="flex-grow-1 p-6 bg-dark">
             <div class="text-center">
-                <h1 class="my-4">Watch History</h1>
-                <h3 class="mb-3">Today</h3>
-
-                <!-- Container for dynamic history entries -->
-                <div id="history-videos-container" class="d-flex flex-column align-items-center"></div>
+                <h1 class="my-4">Your Library</h1>
+                <!-- Container for dynamic library entries -->
+                <div id="library-container" class="d-flex flex-column align-items-center"></div>
             </div>
         </main>
+    </div>
+
+    <!-- Custom Alert Modal -->
+    <div id="custom-alert" class="custom-alert">
+        <div class="custom-alert-content">
+            <h5>Confirm Deletion</h5>
+            <p>Are you sure you want to delete this video? This action cannot be undone.</p>
+            <div class="modal-actions">
+                <button id="confirm-delete" class="btn btn-danger">Yes, Delete</button>
+                <button id="cancel-delete" class="btn btn-secondary">Cancel</button>
+            </div>
+        </div>
     </div>
 </body>
 </html>
