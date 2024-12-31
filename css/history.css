@@ -1,94 +1,62 @@
-/* Styles for the Watched Videos segment */
-
-/* Main container for the watched videos */
-#main-content {
-    padding: 40px 20px;
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: #000 !important;
+    color: #fff !important;
+    overflow-x: hidden;
 }
-
-/* Header styles */
-#main-content h1,
-#main-content h3 {
-    color: #ffffff;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
-}
-
-/* Video item container */
-#main-content .bg-secondary {
-    display: flex;
-    align-items: start;
-    justify-content: space-between;
-    background-color: #1b1b1c; /* Slightly darker shade */
-    border: 1px solid #1b1b1c; /* Subtle border */
-    border-radius: 8px;
-    padding: 15px;
-    max-width: 800px;
-    height: 150px; /* Fixed height */
-    overflow: hidden; /* Ensure no overflow from content */
-    box-sizing: border-box; /* Include padding and border in the dimensions */
-}
-
-/* Thumbnail image */
+/* Updated Thumbnail Styling */
 #main-content img {
     border-radius: 8px;
     width: 150px;
-    height: auto; /* Adjust height automatically to maintain aspect ratio */
-    max-height: 100%; /* Ensure the image does not exceed the container height */
-    object-fit: contain; /* Ensure the whole image fits within the box without cropping */
+    height: 100px; /* Ensures a uniform thumbnail height */
+    object-fit: cover;
     margin-right: 15px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
 }
 
-/* Text container */
+/* Updated Container for Video Details */
 #main-content .flex-grow-1 {
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: space-between;
     overflow: hidden;
-    flex-grow: 1;
 }
 
-/* Video title */
+/* Video Title with ellipsis for overflow */
 #main-content h5 {
+    font-size: 1rem;
     color: #ffffff;
     font-weight: bold;
-    margin-bottom: 5px;
+    margin-bottom: 0.5rem;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
 
-/* Video description */
+/* Video Description */
 #main-content p {
+    font-size: 0.875rem;
     color: #ced4da;
-    margin: 0;
     overflow: hidden;
     text-overflow: ellipsis;
     display: -webkit-box;
     -webkit-line-clamp: 2; /* Limit to 2 lines */
     -webkit-box-orient: vertical;
-    white-space: normal; /* Allow wrapping within the 2-line limit */
+    margin-bottom: 0;
 }
 
-/* Close button */
+/* Action Button (Close) */
 #main-content button {
+    align-self: flex-start;
     background-color: transparent;
-    border: 1px solid #ffffff;
+    border: none;
     color: #ffffff;
-    font-size: 1rem;
-    border-radius: 50%;
-    padding: 5px;
-    width: 32px;
-    height: 32px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background-color 0.2s, color 0.2s;
-    margin-left: 10px;
+    font-size: 1.25rem;
+    padding: 0;
+    cursor: pointer;
 }
 
-/* Close button hover effect */
 #main-content button:hover {
-    background-color: #dc3545; /* Danger red */
-    color: #ffffff;
-    border-color: #dc3545;
+    color: #dc3545;
 }
