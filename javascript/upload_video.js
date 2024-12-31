@@ -30,6 +30,16 @@ function sanitizeFileName(fileName) {
   return fileName.replace(/[.#$[\]]/g, "_");
 }
 
+// Function to generate a random string for video ID
+function generateRandomString(length) {
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let result = '';
+  for (let i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * characters.length));
+  }
+  return result;
+}
+
 // Function to show progress overlay
 function showProgressOverlay(message = "Processing your video...") {
   const overlay = document.createElement("div");
@@ -139,8 +149,8 @@ async function uploadVideo(file, email, title, description, tagsInput) {
     const sanitizedFileName = sanitizeFileName(file.name);
 
     // Generate unique file name and storage path
-    const videoId = `${Date.now()}_${sanitizedFileName}`;
-    const videoPath = `videos/${videoId}`;
+    const videoId = generateRandomString(10); // Generate a short, unreadable video ID
+    const videoPath = `videos/${videoId}_${sanitizedFileName}`;
 
     // Create a storage reference
     const storageRefInstance = storageRef(storage, videoPath);
@@ -162,6 +172,7 @@ async function uploadVideo(file, email, title, description, tagsInput) {
     // Save metadata to Firebase Realtime Database
     const videoMetadataPath = `Uploaded Video/${sanitizedEmail}/${videoId}`;
     const metadata = {
+      videoId, // Add videoId to metadata
       title: title || "Untitled",
       description: description || "No description provided.",
       uploadTime,
