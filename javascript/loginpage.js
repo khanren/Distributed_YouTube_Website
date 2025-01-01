@@ -99,8 +99,10 @@ async function signIn(event) {
                             localStorage.setItem("email", userCredential.user.email);
                             localStorage.setItem("uid", userCredential.user.uid);
 
-                            // Redirect to index.html
-                            window.location.href = "index.html";
+                            // Redirect to the saved page or index.html
+                            const redirectPage = localStorage.getItem("redirectAfterLogin") || "index.html";
+                            localStorage.removeItem("redirectAfterLogin"); // Remove the captured page from local storage
+                            window.location.href = redirectPage;
                         } else {
                             throw new Error("User data is missing or incomplete.");
                         }

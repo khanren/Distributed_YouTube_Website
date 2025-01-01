@@ -135,8 +135,13 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     } else {
         dropdownMenu.innerHTML = `
-            <li><a class="dropdown-item" href="login.html">Log in</a></li>
+            <li><a class="dropdown-item" href="login.html" id="login-link">Log in</a></li>
         `;
+        document.getElementById('login-link').addEventListener('click', () => {
+            // Save the current page before login
+            const currentPage = window.location.href;
+            localStorage.setItem("redirectAfterLogin", currentPage);
+        });
     }
 });
 
