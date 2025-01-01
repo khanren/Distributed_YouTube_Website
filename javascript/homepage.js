@@ -20,6 +20,26 @@ function redirectToVideoPage(videoId) {
     window.location.href = `video.html?videoId=${videoId}`;
 }
 
+async function fetchVideoDetails(videoIds) {
+    try {
+        const url = `https://www.googleapis.com/youtube/v3/videos?part=contentDetails&id=${videoIds.join(',')}&key=${API_KEY}`;
+        const response = await fetch(url);
+        const data = await response.json();
+        return data.items;
+    } catch (error) {
+        console.error('Error fetching video details:', error);
+        return [];
+    }
+}
+
+function formatDuration(duration) {
+    const match = duration.match(/PT(\d+H)?(\d+M)?(\d+S)?/);
+    const hours = (parseInt(match[1]) || 0);
+    const minutes = (parseInt(match[2]) || 0);
+    const seconds = (parseInt(match[3]) || 0);
+    return `${hours ? hours + ':' : ''}${minutes ? (hours && minutes < 10 ? '0' : '') + minutes + ':' : '0:'}${seconds < 10 ? '0' : ''}${seconds}`;
+}
+
 async function fetchVideos(searchQuery = '', append = false) {
     try {
         if (loadingIndicator) {
@@ -38,15 +58,24 @@ async function fetchVideos(searchQuery = '', append = false) {
 
         const items = shuffleArray(searchQuery ? data.items.filter(item => item.id.videoId) : data.items);
         if (!append && videoGrid) videoGrid.innerHTML = '';
-        
+
+        const videoIds = items.map(item => searchQuery ? item.id.videoId : item.id);
+        const videoDetails = await fetchVideoDetails(videoIds);
+        const videoDetailsMap = videoDetails.reduce((acc, item) => {
+            acc[item.id] = item.contentDetails.duration;
+            return acc;
+        }, {});
+
         items.forEach(({ id, snippet }) => {
             const videoId = searchQuery ? id.videoId : id;
+            const duration = formatDuration(videoDetailsMap[videoId]);
             const videoCard = document.createElement('div');
             videoCard.classList.add('video-card');
             videoCard.onclick = () => redirectToVideoPage(videoId);
             videoCard.innerHTML = `
                 <div class="video-thumbnail">
                     <img src="${snippet.thumbnails.medium.url}" alt="${snippet.title}">
+                    <span class="video-duration">${duration}</span>
                 </div>
                 <h2>${snippet.title}</h2>
                 <p>${snippet.channelTitle}</p>

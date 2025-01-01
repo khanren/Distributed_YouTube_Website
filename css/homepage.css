@@ -114,6 +114,21 @@ aside .nav-link:hover {
     display: block;
 }
 
+.video-thumbnail {
+    position: relative;
+}
+
+.video-duration {
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    background-color: rgba(0, 0, 0, 0.8);
+    color: #fff;
+    padding: 2px 4px;
+    border-radius: 2px;
+    font-size: 12px;
+}
+
 .video-card h2 {
     padding: 0.5rem;
     font-size: 14px;
