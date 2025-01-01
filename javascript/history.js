@@ -63,16 +63,31 @@ function fetchWatchedVideos() {
     watchedVideosRef.once('value').then(async (snapshot) => {
         const watchedVideos = snapshot.val();
         if (watchedVideos) {
-            const sortedVideos = Object.entries(watchedVideos).sort(([, a], [, b]) => b.timestamp - a.timestamp);
-            for (const [videoId, videoData] of sortedVideos) {
-                const videoDetails = await fetchVideoDetails(videoId); // Fetch additional details from YouTube API
+            // Group videos by date
+            const videosByDate = {};
+            for (const [videoId, videoData] of Object.entries(watchedVideos)) {
+                const date = new Date(videoData.timestamp).toLocaleDateString();
+                if (!videosByDate[date]) {
+                    videosByDate[date] = [];
+                }
+                videosByDate[date].push({ videoId, ...videoData });
+            }
 
-                if (videoDetails) {
-                    addHistoryVideo({
-                        ...videoDetails,
-                        videoId: videoId, // Ensure videoId is included
-                        duration: videoData.duration || 'Unknown Duration', // Include duration if stored in Firebase
-                    });
+            // Sort dates in descending order
+            const sortedDates = Object.keys(videosByDate).sort((a, b) => new Date(b) - new Date(a));
+
+            for (const date of sortedDates) {
+                addDateHeader(date);
+                for (const videoData of videosByDate[date]) {
+                    const videoDetails = await fetchVideoDetails(videoData.videoId); // Fetch additional details from YouTube API
+
+                    if (videoDetails) {
+                        addHistoryVideo({
+                            ...videoDetails,
+                            videoId: videoData.videoId, // Ensure videoId is included
+                            duration: videoData.duration || 'Unknown Duration', // Include duration if stored in Firebase
+                        });
+                    }
                 }
             }
         } else {
@@ -81,6 +96,17 @@ function fetchWatchedVideos() {
     }).catch(error => {
         console.error('Error fetching watched videos:', error);
     });
+}
+
+// Function to add a date header to the history
+function addDateHeader(date) {
+    const historyContainer = document.getElementById("history-videos-container");
+
+    const dateHeader = document.createElement("h3");
+    dateHeader.classList.add("text-white", "my-3");
+    dateHeader.textContent = date;
+
+    historyContainer.appendChild(dateHeader);
 }
 
 // Function to add a video card to the history
