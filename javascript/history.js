@@ -9,7 +9,7 @@ var firebaseConfig = {
     databaseURL: "https://distributed-4f324-default-rtdb.asia-southeast1.firebasedatabase.app/"
 };
 
-const API_KEY = 'AIzaSyBhMPZUpH_HE_otU_kOWd-Zra91EoayeP0';
+const API_KEY = 'AIzaSyBjbMHVj0K6D31ikBF76rrlDpjWUkJmDM4';
 
 firebase.initializeApp(firebaseConfig);
 const database = firebase.database();

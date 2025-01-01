@@ -1,4 +1,4 @@
-const API_KEY = 'AIzaSyBhMPZUpH_HE_otU_kOWd-Zra91EoayeP0';
+const API_KEY = 'AIzaSyBjbMHVj0K6D31ikBF76rrlDpjWUkJmDM4';
 const videoGrid = document.getElementById('video-grid');
 const loadingIndicator = document.getElementById('loading');
 
