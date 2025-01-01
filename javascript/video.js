@@ -41,9 +41,11 @@ function fetchComments() {
             sortedComments.forEach(([commentId, commentData]) => {
                 const commentElement = document.createElement('div');
                 commentElement.className = 'comment';
+                const date = new Date(commentData.timestamp);
+                const formattedDate = date.toLocaleString();
                 commentElement.innerHTML = `
                     <div class="d-flex justify-content-between align-items-center">
-                        <strong>${commentData.username}</strong>
+                        <strong>${commentData.username} <small class="text-muted">${formattedDate}</small></strong>
                         ${isLoggedIn && currentUserId === commentData.userId
                             ? `<button class="btn btn-danger btn-sm delete-comment" data-id="${commentId}">Delete</button>`
                             : ''}
@@ -298,6 +300,7 @@ commentSubmit.addEventListener('click', () => {
                 username: username,
                 text: commentText,
                 userId: userData.UID || '',
+                timestamp: Date.now()
             };
 
             database.ref(`Comments/${videoId}/${commentId}`).set(newComment)

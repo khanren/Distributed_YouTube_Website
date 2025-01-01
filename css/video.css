@@ -137,6 +137,10 @@ ul#recommended-list {
     margin-left: 10px;
 }
 
+.comment small.text-muted {
+    color: #fff !important;
+}
+
 #add-comment {
     display: flex;
     margin-top: 20px;
