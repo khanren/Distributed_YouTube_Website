@@ -236,6 +236,7 @@ ul#recommended-list {
     padding: 15px;
     border-radius: 8px;
     margin-top: 20px;
+    transition: max-height 0.5s ease; /* Smooth transition */
 }
 
 #video-description {
@@ -244,8 +245,10 @@ ul#recommended-list {
     display: -webkit-box;
     -webkit-line-clamp: 3; /* Limit to 3 lines */
     -webkit-box-orient: vertical;
+    transition: max-height 0.5s ease; /* Smooth transition */
 }
 
 #more-button, #less-button {
     display: none; /* Hidden by default */
+    text-decoration: none; /* Remove underline */
 }

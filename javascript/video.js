@@ -198,6 +198,7 @@ function onPlayerReady(event) {
 // Add event listener for the "More" button
 moreButton.addEventListener('click', () => {
     videoDescription.style.webkitLineClamp = 'unset';
+    videoDescription.style.maxHeight = 'none'; // Remove max-height for smooth transition
     moreButton.style.display = 'none';
     lessButton.style.display = 'block';
 });
@@ -205,6 +206,7 @@ moreButton.addEventListener('click', () => {
 // Add event listener for the "Less" button
 lessButton.addEventListener('click', () => {
     videoDescription.style.webkitLineClamp = '3';
+    videoDescription.style.maxHeight = '4.5em'; // Set max-height for smooth transition
     moreButton.style.display = 'block';
     lessButton.style.display = 'none';
 });
