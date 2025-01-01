@@ -230,3 +230,22 @@ ul#recommended-list {
 .modal-actions .btn-secondary:hover {
     background-color: #666;
 }
+
+#video-description-container {
+    background-color: #111;
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 20px;
+}
+
+#video-description {
+    white-space: pre-wrap; /* Preserve whitespace and line breaks */
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 3; /* Limit to 3 lines */
+    -webkit-box-orient: vertical;
+}
+
+#more-button, #less-button {
+    display: none; /* Hidden by default */
+}

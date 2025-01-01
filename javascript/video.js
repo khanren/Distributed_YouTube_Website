@@ -9,6 +9,9 @@ const likeButton = document.getElementById('like-button');
 const dislikeButton = document.getElementById('dislike-button');
 const shareButton = document.getElementById('share-button');
 const saveButton = document.querySelector(".btn-outline-light i.bi-bookmark").parentElement;
+const videoDescription = document.getElementById('video-description');
+const moreButton = document.getElementById('more-button');
+const lessButton = document.getElementById('less-button');
 
 let player;
 
@@ -171,7 +174,40 @@ function onPlayerReady(event) {
     updateLikeDislikeCountsDisplay();
     fetchComments();
     logVideoView(title); // Log the video view with the title when the player is ready
+
+    // Fetch and display video description
+    fetch(`https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${videoId}&key=AIzaSyBhMPZUpH_HE_otU_kOWd-Zra91EoayeP0`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.items && data.items.length > 0) {
+                const description = data.items[0].snippet.description;
+                videoDescription.innerText = description;
+                if (description.split('\n').length > 3) {
+                    moreButton.style.display = 'block';
+                }
+            } else {
+                videoDescription.innerText = 'Description not available.';
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching video description:', error);
+            videoDescription.innerText = 'Error fetching description.';
+        });
 }
+
+// Add event listener for the "More" button
+moreButton.addEventListener('click', () => {
+    videoDescription.style.webkitLineClamp = 'unset';
+    moreButton.style.display = 'none';
+    lessButton.style.display = 'block';
+});
+
+// Add event listener for the "Less" button
+lessButton.addEventListener('click', () => {
+    videoDescription.style.webkitLineClamp = '3';
+    moreButton.style.display = 'block';
+    lessButton.style.display = 'none';
+});
 
 function onPlayerError(event) {
     console.error('Error with the YouTube Player:', event.data);
