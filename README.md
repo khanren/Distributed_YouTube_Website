@@ -18,6 +18,11 @@ The platform is built using HTML, CSS, JavaScript, Firebase, and the YouTube API
 
 <br>
 
+## Important Notice
+This platform has been detected as social engineering due to the behaviour of user credential retrieval from Firebase to local storage. We confirm that this platform is safe to use, as we are the only authorized persons with access to Firebase.
+
+<br>
+
 ## Signup Page
 <div align="center">
   <img src="Distributed_Sysem_Final_Assessment_Screenshot/Signup_page.png" style="width:500px;" alt="Signup Page">
