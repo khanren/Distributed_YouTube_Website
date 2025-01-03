@@ -23,3 +23,39 @@ The platform is built using HTML, CSS, JavaScript, Firebase, and the YouTube API
   <img src="Distributed_Sysem_Final_Assessment_Screenshot/Signup_page.png" style="width:500px;" alt="Signup Page">
 </div>
 <br>
+
+## Login Page
+<div align="center">
+  <img src="Distributed_Sysem_Final_Assessment_Screenshot/Login_page.png" style="width:500px;" alt="Login Page">
+</div>
+<br>
+
+## Reset Password Page
+<div align="center">
+  <img src="Distributed_Sysem_Final_Assessment_Screenshot/Reset_password_page.png" style="width:500px;" alt="Reset Password Page">
+</div>
+<br>
+
+## Homepage
+<div align="center">
+  <img src="Distributed_Sysem_Final_Assessment_Screenshot/Homepage.png" style="width:500px;" alt="Home Page">
+</div>
+<br>
+
+## User Profile
+<div align="center">
+  <img src="Distributed_Sysem_Final_Assessment_Screenshot/User_profile.png" style="width:500px;" alt="User Profile Page">
+</div>
+<br>
+
+## Play Video
+<div align="center">
+  <img src="Distributed_Sysem_Final_Assessment_Screenshot/Watch video.png" style="width:500px;" alt="Play Video Page">
+</div>
+<br>
+
+## Share
+<div align="center">
+  <img src="Distributed_Sysem_Final_Assessment_Screenshot/Share_function.png" style="width:500px;" alt="Share Function">
+</div>
+<br>
