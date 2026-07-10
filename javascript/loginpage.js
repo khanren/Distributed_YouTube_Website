@@ -134,7 +134,7 @@ function handleCredentialResponse(response) {
 
     localStorage.setItem("isLoggedIn", "true");
     localStorage.setItem("username", "GoogleUser");
-    localStorage.setItem("avatar", "https://via.placeholder.com/32");
+    localStorage.setItem("avatar", "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'%3E%3Ccircle cx='20' cy='20' r='20' fill='%23606060'/%3E%3Ccircle cx='20' cy='15' r='7' fill='%23bbb'/%3E%3Cpath d='M7 35c1-7 6-10 13-10s12 3 13 10z' fill='%23bbb'/%3E%3C/svg%3E");
 
     // Redirect to index.html
     window.location.href = "index.html";

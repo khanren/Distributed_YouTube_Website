@@ -4,6 +4,7 @@ const loadingIndicator = document.getElementById('loading');
 
 let nextPageToken = null;
 let currentSearchQuery = new URLSearchParams(window.location.search).get('query');
+let isFetching = false;
 
 function shuffleArray(array) {
     for (let i = array.length - 1; i > 0; i--) {
@@ -18,6 +19,8 @@ function redirectToVideoPage(videoId) {
 }
 
 async function fetchVideos(searchQuery = '', append = false) {
+    if (isFetching) return;
+    isFetching = true;
     try {
         loadingIndicator.classList.remove('hidden');
         const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(searchQuery)}&type=video&maxResults=50&key=${API_KEY}${nextPageToken ? `&pageToken=${nextPageToken}` : ''}`;
@@ -46,6 +49,9 @@ async function fetchVideos(searchQuery = '', append = false) {
         });
     } catch (error) {
         console.error('Error fetching videos:', error);
+    } finally {
+        isFetching = false;
+        loadingIndicator.classList.add('hidden');
     }
 }
 
@@ -68,5 +74,15 @@ window.addEventListener('scroll', () => {
 });
 
 if (currentSearchQuery) {
+    document.getElementById('search-input').value = currentSearchQuery;
     fetchVideos(currentSearchQuery);
+}
+
+document.getElementById('menu-toggle').addEventListener('click', () => {
+    document.getElementById('sidebar').classList.toggle('hidden');
+});
+
+const storedAvatar = localStorage.getItem('avatar');
+if (storedAvatar) {
+    document.getElementById('userAvatar').src = storedAvatar;
 }

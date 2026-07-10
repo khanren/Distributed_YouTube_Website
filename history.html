@@ -12,6 +12,7 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>    
     <link rel="stylesheet" href="css/homepage.css">
     <link rel="stylesheet" href="css/history.css">
+    <script src="javascript/navbar-search.js" defer></script>
     <script type="module" src="javascript/history.js" defer></script>
 </head>
 <body class="bg-dark text-white">
@@ -31,7 +32,7 @@
         </form>      
         <div class="dropdown">
             <img 
-                src="https://via.placeholder.com/40" 
+                src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'%3E%3Ccircle cx='20' cy='20' r='20' fill='%23606060'/%3E%3Ccircle cx='20' cy='15' r='7' fill='%23bbb'/%3E%3Cpath d='M7 35c1-7 6-10 13-10s12 3 13 10z' fill='%23bbb'/%3E%3C/svg%3E"
                 alt="User Avatar" 
                 class="rounded-circle dropdown-toggle" 
                 id="userAvatar" 
@@ -41,7 +42,7 @@
             <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end" aria-labelledby="userAvatar">
                 <li><a class="dropdown-item" href="settings.html">Settings</a></li>
                 <li><hr class="dropdown-divider"></li>
-                <li><a class="dropdown-item" href="index.html">Logout</a></li>
+                <li><a class="dropdown-item" href="index.html" onclick="localStorage.clear()">Logout</a></li>
             </ul>
         </div>
     </nav>

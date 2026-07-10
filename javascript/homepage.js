@@ -7,6 +7,7 @@ const suggestionList = document.getElementById('suggestion-list');
 
 let nextPageToken = null;
 let currentSearchQuery = '';
+let isFetching = false;
 
 function shuffleArray(array) {
     for (let i = array.length - 1; i > 0; i--) {
@@ -33,14 +34,19 @@ async function fetchVideoDetails(videoIds) {
 }
 
 function formatDuration(duration) {
+    if (!duration) return '';
     const match = duration.match(/PT(\d+H)?(\d+M)?(\d+S)?/);
-    const hours = (parseInt(match[1]) || 0);
-    const minutes = (parseInt(match[2]) || 0);
-    const seconds = (parseInt(match[3]) || 0);
-    return `${hours ? hours + ':' : ''}${minutes ? (hours && minutes < 10 ? '0' : '') + minutes + ':' : '0:'}${seconds < 10 ? '0' : ''}${seconds}`;
+    if (!match) return '';
+    const hours = parseInt(match[1]) || 0;
+    const minutes = parseInt(match[2]) || 0;
+    const seconds = parseInt(match[3]) || 0;
+    const pad = n => (n < 10 ? '0' : '') + n;
+    return hours ? `${hours}:${pad(minutes)}:${pad(seconds)}` : `${minutes}:${pad(seconds)}`;
 }
 
 async function fetchVideos(searchQuery = '', append = false) {
+    if (isFetching) return;
+    isFetching = true;
     try {
         if (loadingIndicator) {
             loadingIndicator.classList.remove('hidden');
@@ -84,36 +90,11 @@ async function fetchVideos(searchQuery = '', append = false) {
         });
     } catch (error) {
         console.error('Error fetching videos:', error);
+    } finally {
+        isFetching = false;
+        if (loadingIndicator) loadingIndicator.classList.add('hidden');
     }
 }
-
-async function fetchSuggestions(query) {
-    try {
-        const response = await fetch(`https://suggestqueries.google.com/complete/search?client=firefox&ds=yt&q=${encodeURIComponent(query)}`);
-        const data = await response.json();
-        return data[1];
-    } catch (error) {
-        console.error('Error fetching suggestions:', error);
-        return [];
-    }
-}
-
-function showSuggestions(suggestions) {
-    suggestionList.innerHTML = suggestions
-        .map(suggestion => `<li class="list-group-item">${suggestion}</li>`)
-        .join('');
-    suggestionList.classList.remove('d-none');
-}
-
-searchInput.addEventListener('input', async () => {
-    const query = searchInput.value.trim();
-    if (!query) {
-        suggestionList.classList.add('d-none');
-        return;
-    }
-    const suggestions = await fetchSuggestions(query);
-    showSuggestions(suggestions);
-});
 
 searchForm.addEventListener('submit', e => {
     e.preventDefault();
@@ -144,7 +125,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const dropdownMenu = document.querySelector('.dropdown-menu');
 
     if (isLoggedIn) {
-        userAvatar.src = avatar || 'https://via.placeholder.com/40';
+        userAvatar.src = avatar || "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'%3E%3Ccircle cx='20' cy='20' r='20' fill='%23606060'/%3E%3Ccircle cx='20' cy='15' r='7' fill='%23bbb'/%3E%3Cpath d='M7 35c1-7 6-10 13-10s12 3 13 10z' fill='%23bbb'/%3E%3C/svg%3E";
         dropdownMenu.innerHTML = `
             <li><a class="dropdown-item" href="settings.html">Settings</a></li>
             <li><hr class="dropdown-divider"></li>
